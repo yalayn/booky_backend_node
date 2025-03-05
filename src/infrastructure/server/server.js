@@ -10,7 +10,7 @@ const connectDB = require('../database/database');
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3005;
 
 // Conectar a la base de datos
 connectDB();
@@ -20,6 +20,7 @@ app.use(cors({ origin: 'http://localhost:3000' }));
 
 app.use(bodyParser.json());
 
+//RUTA DE API USER
 app.use('/api/users', userController);
 
 app.listen(port, () => {
