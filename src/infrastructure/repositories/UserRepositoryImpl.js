@@ -1,5 +1,4 @@
-// src/infrastructure/repositories/UserRepositoryImpl.js
-
+const mongoose = require('mongoose');
 const UserModel = require('../database/models/UserModel');
 const UserRepository = require('../../domain/repositories/UserRepository');
 const User = require('../../domain/entities/User');
@@ -17,7 +16,7 @@ class UserRepositoryImpl extends UserRepository {
   }
 
   async findById(id) {
-    const user = await UserModel.findById(id);
+    const user = await UserModel.findOne({id});
     if (user) {
       return new User(user.id, user.name, user.username, user.password);
     }
