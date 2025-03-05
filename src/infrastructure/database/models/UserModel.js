@@ -21,6 +21,34 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  "created_at": {
+    type: Date,
+    default: Date.now
+  },
+  "books": [
+    {
+      "book_id": {
+        type: Number,
+        required: true
+      },
+      "state": {
+        type: String,
+        required: true
+      },
+      "year_read": {
+        type: Number,
+        required: true
+      },
+      "rating": {
+        type: Number,
+        required: true
+      },
+      "review": {
+        type: String,
+        required: true
+      }
+    }
+  ]
 });
 
 // Hash de la contraseña antes de guardar el usuario
