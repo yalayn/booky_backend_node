@@ -5,6 +5,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const userController = require('../controllers/UserController');
+const bookController = require('../controllers/BookController');
 const connectDB = require('../database/database');
 
 dotenv.config();
@@ -19,6 +20,9 @@ connectDB();
 app.use(cors({ origin: 'http://localhost:3000' }));
 
 app.use(bodyParser.json());
+
+//RUTA DE API USER
+app.use('/api/book', bookController);
 
 //RUTA DE API USER
 app.use('/api/users', userController);
