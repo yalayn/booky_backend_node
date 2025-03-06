@@ -1,7 +1,7 @@
 // src/application/use_cases/authenticateUser.js
 
 const jwt = require('jsonwebtoken');
-const { UserNotFoundError, InvalidPasswordError } = require('../errors');
+const { UserNotFoundError, InvalidPasswordError } = require('../../errors');
 
 const authenticateUser = async (userRepository, { username, password }) => {
   const user = await userRepository.findByUsername(username);

@@ -3,9 +3,9 @@
 const express = require('express');
 const router = express.Router();
 const UserRepositoryImpl = require('../repositories/UserRepositoryImpl');
-const { registerUser } = require('../../application/use_cases/registerUser');
-const { findUserByUsername } = require('../../application/use_cases/findUser');
-const { authenticateUser } = require('../../application/use_cases/authenticateUser');
+const { registerUser } = require('../../application/use_cases/user/registerUser');
+const { findUserByUsername } = require('../../application/use_cases/user/findUser');
+const { authenticateUser } = require('../../application/use_cases/user/authenticateUser');
 const authMiddleware = require('../middleware/auth');
 const redisClient = require('../config/redis');
 const { UserNotFoundError, InvalidPasswordError } = require('../../application/errors');
