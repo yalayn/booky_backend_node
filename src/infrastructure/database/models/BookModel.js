@@ -9,7 +9,7 @@ const BookSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    autor_id: {
+    author_id: {
         type: Types.ObjectId,
         required: true,
         ref: 'Author'
