@@ -1,13 +1,14 @@
 // src/infrastructure/server/server.js
 
-const express          = require('express');
-const cors             = require('cors');
-const bodyParser       = require('body-parser');
-const dotenv           = require('dotenv');
-const userController   = require('../controllers/UserController');
-const bookController   = require('../controllers/BookController');
-const authorController = require('../controllers/AuthorController');
-const connectDB        = require('../database/database');
+const express             = require('express');
+const cors                = require('cors');
+const bodyParser          = require('body-parser');
+const dotenv              = require('dotenv');
+const userController      = require('../controllers/UserController');
+const bookController      = require('../controllers/BookController');
+const authorController    = require('../controllers/AuthorController');
+const editorialController = require('../controllers/EditorialController');
+const connectDB           = require('../database/database');
 
 dotenv.config();
 
@@ -30,6 +31,9 @@ app.use('/api/users', userController);
 
 //RUTA DE API AUTHOR
 app.use('/api/author', authorController);
+
+//RUTA DE API EDITORIAL
+app.use('/api/editorial', editorialController);
 
 app.listen(port, () => {
   console.log(`Servidor escuchando en http://localhost:${port}`);
