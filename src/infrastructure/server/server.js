@@ -9,6 +9,7 @@ const bookController      = require('../controllers/BookController');
 const authorController    = require('../controllers/AuthorController');
 const editorialController = require('../controllers/EditorialController');
 const connectDB           = require('../database/database');
+const userBookController  = require('../controllers/UserBookController');
 
 dotenv.config();
 
@@ -34,6 +35,9 @@ app.use('/api/author', authorController);
 
 //RUTA DE API EDITORIAL
 app.use('/api/editorial', editorialController);
+
+//RUTA DE API USERBOOK
+app.use('/api/userbook', userBookController);
 
 app.listen(port, () => {
   console.log(`Servidor escuchando en http://localhost:${port}`);

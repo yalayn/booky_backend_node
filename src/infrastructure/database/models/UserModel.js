@@ -33,19 +33,28 @@ const UserSchema = new mongoose.Schema({
       },
       "state": {
         type: String,
-        required: true
+        default: 'to_read',
+        enum: ['read', 'reading', 'to_read']
       },
       "year_read": {
         type: Number,
-        required: true
+        default: new Date().getFullYear()
       },
       "rating": {
         type: Number,
-        required: true
+        default: 0,
       },
       "review": {
         type: String,
-        required: true
+        default: ''
+      },
+      "registeredAt": {
+        type: Date,
+        default: Date.now
+      },
+      "updatedAt": {
+        type: Date,
+        default: Date.now
       }
     }
   ]
