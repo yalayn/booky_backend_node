@@ -1,4 +1,3 @@
-
 const UserModel          = require('../database/models/UserModel');
 const UserBookRepository = require('../../domain/repositories/UserBookRepository');
 const UserBook           = require('../../domain/entities/UserBook');
@@ -71,13 +70,25 @@ class UserBookRepositoryImpl extends UserBookRepository{
         }
     }
 
-    async updateState(userId, bookId, updates) {
+    async updateState(userId, bookId, newState) {
         try {
-            return await this.database('user_books')
-                .where({ user_id: userId, book_id: bookId })
-                .update(updates);
+            // Validar que sea un estado válido
+            const allowedStates = UserModel.schema.path('books').schema.path('state').enumValues;
+            if (!allowedStates.includes(newState)) {
+                throw new Error('Invalid state. Valid states are: ' + validStates.join(', '));
+            }
+            const result = await UserModel.updateOne(
+                { id: userId, 'books.book_id': bookId }, // Buscar el usuario y el libro específico
+                { $set: { 'books.$.state': newState } } // Actualizar el campo state del libro encontrado
+            );
+
+            if (result.modifiedCount === 0) {
+                throw new Error('Book state not updated. Either the user or book was not found.');
+            }
+
+            return { success: true, message: 'Book state updated successfully' };
         } catch (error) {
-            throw new Error('Error updating user book: ' + error.message);
+            throw new Error('Error updating book state: ' + error.message);
         }
     }
 }

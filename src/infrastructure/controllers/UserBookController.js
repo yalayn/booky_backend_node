@@ -4,8 +4,10 @@ const authMiddleware = require('../middleware/auth');
 const UserBookRepositoryImpl = require('../repositories/UserBookRepositoryImpl');
 const UserRepositoryImpl     = require('../repositories/UserRepositoryImpl');
 const registerUserBook       = require('../../application/use_cases/user_book/registerUserBook');
+const removeUserBook         = require('../../application/use_cases/user_book/removeUserBook');
+const updateStateUserBook    = require('../../application/use_cases/user_book/updateStateUserBook');
 
-// Ruta para crear un usuario
+// Ruta para agregar un nuevo libro a un usuario
 router.post('/register', authMiddleware, async (req, res) => {
     const userRepository     = new UserRepositoryImpl();
     const userBookRepository = new UserBookRepositoryImpl();
@@ -40,6 +42,25 @@ router.post('/remove', authMiddleware, async (req, res) => {
       res.status(400).json({ error: error.message });
     }
 });
+
+// Ruta para actualizar estado de un libro de un usuario
+router.put('/update_state', authMiddleware, async (req, res) => {
+    const userRepository     = new UserRepositoryImpl();
+    const userBookRepository = new UserBookRepositoryImpl();
+    const { book_id, new_state } = req.body;
+    try {
+        const user = await userRepository.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        const userId   = user.id;
+        const userBook = await updateStateUserBook(userBookRepository, {userId, bookId: book_id, newState: new_state});
+        res.status(201).json(userBook);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+});
+
 // Ruta para listar libros de un usuario
 router.get('/list', authMiddleware, async (req, res) => {
     const userBookRepository = new UserBookRepositoryImpl();

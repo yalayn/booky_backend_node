@@ -18,7 +18,7 @@ class UserBookRepository {
       throw new Error('Not implemented');
     }
 
-    async updateState(userId, bookId, updates) {
+    async updateState(userId, bookId, newState) {
       throw new Error('Not implemented'); 
     }
     
