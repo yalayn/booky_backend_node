@@ -1,7 +1,8 @@
 // src/infrastructure/database/models/UserModel.js
 
 const {mongoose, model, Types} = require('mongoose');
-const bcrypt   = require('bcrypt');
+const bcrypt    = require('bcrypt');
+const BOOK_STATES = require('../../../domain/constants/BookStates');
 
 const UserSchema = new mongoose.Schema({
   id: {
@@ -35,7 +36,7 @@ const UserSchema = new mongoose.Schema({
       state: {
         type: String,
         default: 'to_read',
-        enum: ['read', 'reading', 'to_read']
+        enum: BOOK_STATES
       },
       year_read: {
         type: Number,
