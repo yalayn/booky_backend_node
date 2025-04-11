@@ -11,9 +11,9 @@ class UserBookRepositoryImpl extends UserBookRepository{
     }
 
     async findByUserId(userId) {
-        const user = await UserModel.findOne({id});
+        const user = await UserModel.findOne({id:userId});
         if (user) {
-            return new UserBook(user.id, user.books);
+            return new UserBook(user.books);
         }
         return null;
     }

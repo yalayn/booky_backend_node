@@ -40,5 +40,20 @@ router.post('/remove', authMiddleware, async (req, res) => {
       res.status(400).json({ error: error.message });
     }
 });
+// Ruta para listar libros de un usuario
+router.get('/list', authMiddleware, async (req, res) => {
+    const userBookRepository = new UserBookRepositoryImpl();
+    try {
+        const userId = req.user.id;
+        const userBooks = await userBookRepository.findByUserId(userId);
+        if (userBooks) {
+            res.status(200).json(userBooks);
+        } else {
+            res.status(404).json({ error: 'User books not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
 
 module.exports = router;
