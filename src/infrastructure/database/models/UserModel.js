@@ -1,6 +1,6 @@
 // src/infrastructure/database/models/UserModel.js
 
-const mongoose = require('mongoose');
+const {mongoose, model, Types} = require('mongoose');
 const bcrypt   = require('bcrypt');
 
 const UserSchema = new mongoose.Schema({
@@ -21,38 +21,39 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  "created_at": {
+  created_at: {
     type: Date,
     default: Date.now
   },
-  "books": [
+  books: [
     {
-      "book_id": {
-        type: Number,
-        required: true
+      book_id: {
+          type: Types.ObjectId,
+          required: true,
+          ref: 'Book'
       },
-      "state": {
+      state: {
         type: String,
         default: 'to_read',
         enum: ['read', 'reading', 'to_read']
       },
-      "year_read": {
+      year_read: {
         type: Number,
         default: new Date().getFullYear()
       },
-      "rating": {
+      rating: {
         type: Number,
         default: 0,
       },
-      "review": {
+      review: {
         type: String,
         default: ''
       },
-      "registeredAt": {
+      registeredAt: {
         type: Date,
         default: Date.now
       },
-      "updatedAt": {
+      updatedAt: {
         type: Date,
         default: Date.now
       }
@@ -79,6 +80,6 @@ UserSchema.methods.comparePassword = function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };
 
-const UserModel = mongoose.model('User', UserSchema);
+const UserModel = model('User', UserSchema);
 
 module.exports = UserModel;

@@ -28,16 +28,15 @@ class UserBookRepositoryImpl extends UserBookRepository{
 
     async add({userId, book}) {
         try {
-            const user = await UserModel.findOne({userId});
-            if (user) {
-                console.log(user);
-                console.log(book);
-                await UserModel.updateOne(
-                    { id: userId },
-                    { $push: { books: book } }
-                );
-                return new UserBook(userId, book);
+            const user = await UserModel.findOne({id:userId});
+            if (!user) {
+                throw new Error('User not found');
             }
+            await UserModel.updateOne(
+                { id: userId },
+                { $push: { books: book } }
+            );
+            return new UserBook(userId, book);
         } catch (error) {
             throw new Error('Error adding user book: ' + error.message);
         }
