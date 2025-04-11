@@ -26,17 +26,31 @@ class UserBookRepositoryImpl extends UserBookRepository{
         return null;
     }
 
-    async add({userId, book}) {
+    async add(userId, bookId) {
         try {
-            const user = await UserModel.findOne({id:userId});
+            // Verificar si el usuario existe
+            const user = await UserModel.findOne({ id: userId });
             if (!user) {
                 throw new Error('User not found');
             }
-            await UserModel.updateOne(
+
+            // Verificar si el libro ya existe en el arreglo books
+            const bookExists = user.books.some(book => book.book_id.toString() === bookId.toString());
+            if (bookExists) {
+                throw new Error('Book already exists for this user');
+            }
+
+            // Agregar el libro al arreglo books
+            const result = await UserModel.updateOne(
                 { id: userId },
-                { $push: { books: book } }
+                { $push: { books: { book_id: bookId } } }
             );
-            return new UserBook(userId, book);
+
+            if (result.modifiedCount === 0) {
+                throw new Error('Book not added');
+            }
+
+            return { success: true, message: 'Book added successfully' };
         } catch (error) {
             throw new Error('Error adding user book: ' + error.message);
         }

@@ -15,9 +15,7 @@ async function registerUserBook(userBookRepository, {userId, bookId}) {
         throw new Error('User ID and Book ID are required');
     }
     bookId = new mongoose.Types.ObjectId(bookId);
-    const book     = {book_id: bookId};
-    const userBook = {userId, book};
-    return await userBookRepository.add(userBook);
+    return await userBookRepository.add(userId, bookId);
 }
 
 module.exports = registerUserBook;

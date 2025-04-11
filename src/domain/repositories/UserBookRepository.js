@@ -10,7 +10,7 @@ class UserBookRepository {
       throw new Error('Not implemented');
     }
 
-    async add(userId, book) {
+    async add(userId, bookId) {
       throw new Error('Not implemented...');
     }
 
