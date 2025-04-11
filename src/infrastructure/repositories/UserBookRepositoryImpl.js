@@ -58,9 +58,14 @@ class UserBookRepositoryImpl extends UserBookRepository{
 
     async remove(userId, bookId) {
         try {
-            return await this.database('user_books')
-                .where({ user_id: userId, book_id: bookId })
-                .del();
+            const result = await UserModel.updateOne(
+                { id: userId },
+                { $pull: { books: { book_id: bookId } } }
+            );
+            if (result.modifiedCount === 0) {
+                throw new Error('Book not found or not removed');
+            }
+            return { success: true, message: 'Book removed successfully' };
         } catch (error) {
             throw new Error('Error removing user book: ' + error.message);
         }
