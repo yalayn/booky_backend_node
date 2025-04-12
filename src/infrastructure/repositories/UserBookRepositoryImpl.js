@@ -91,6 +91,76 @@ class UserBookRepositoryImpl extends UserBookRepository{
             throw new Error('Error updating book state: ' + error.message);
         }
     }
+
+    async findUserBooksWithDetails(userId) {
+        try {
+            const userBooks = await UserModel.aggregate([
+                {
+                    $match: { id: userId } // Filtrar por el usuario específico
+                },
+                {
+                    $unwind: '$books' // Descomponer el arreglo de libros
+                },
+                {
+                    $lookup: {
+                        from        : 'books', // Nombre de la colección de libros
+                        localField  : 'books.book_id', // Campo en la colección de usuarios
+                        foreignField: '_id', // Campo en la colección de libros
+                        as          : 'bookDetails' // Nombre del campo donde se almacenarán los detalles del libro
+                    }
+                },
+                {
+                    $unwind: '$bookDetails' // Descomponer el arreglo de detalles del libro
+                },
+                {
+                    $lookup: {
+                        from: 'authors', // Nombre de la colección de autores
+                        localField: 'bookDetails.author_id', // Campo en la colección de libros
+                        foreignField: '_id', // Campo en la colección de autores
+                        as: 'authorDetails' // Nombre del campo donde se almacenarán los detalles del autor
+                    }
+                },
+                {
+                    $unwind: '$authorDetails' // Descomponer el arreglo de detalles del autor
+                },
+                {
+                    $lookup: {
+                        from: 'editorials', // Nombre de la colección de editoriales
+                        localField: 'bookDetails.editorial_id', // Campo en la colección de libros
+                        foreignField: '_id', // Campo en la colección de editoriales
+                        as: 'editorialDetails' // Nombre del campo donde se almacenarán los detalles de la editorial
+                    }
+                },
+                {
+                    $unwind: '$editorialDetails' // Descomponer el arreglo de detalles de la editorial
+                },
+                {
+                    $project: {
+                        _id: 0, // Excluir el _id del usuario
+                        book_id     : '$books.book_id',
+                        state       : '$books.state',
+                        year_read   : '$books.year_read',
+                        rating      : '$books.rating',
+                        review      : '$books.review',
+                        registeredAt: '$books.registeredAt',
+                        updatedAt   : '$books.updatedAt',
+                        book_details: {
+                            title           : '$bookDetails.title',
+                            genre           : '$bookDetails.genre',
+                            publication_year: '$bookDetails.publication_year',
+                            published       : '$bookDetails.isbn',
+                            author: '$authorDetails.name',
+                            editorial: '$editorialDetails.name'
+                        }
+                    }
+                }
+            ]);
+
+            return userBooks;
+        } catch (error) {
+            throw new Error('Error fetching user books with details: ' + error.message);
+        }
+    }
 }
 
 module.exports = UserBookRepositoryImpl;

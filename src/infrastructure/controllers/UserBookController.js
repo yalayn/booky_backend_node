@@ -66,7 +66,7 @@ router.get('/list', authMiddleware, async (req, res) => {
     const userBookRepository = new UserBookRepositoryImpl();
     try {
         const userId = req.user.id;
-        const userBooks = await userBookRepository.findByUserId(userId);
+        const userBooks = await userBookRepository.findUserBooksWithDetails(userId);
         if (userBooks) {
             res.status(200).json(userBooks);
         } else {
