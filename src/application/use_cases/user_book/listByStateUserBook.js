@@ -1,4 +1,4 @@
-
+const BookDataMain = require('../../../domain/entities/BookDataMain');
 /**
  * @module listByStateUserBook
  * @description Modulo para listar libros de un usuario por estado
@@ -14,7 +14,13 @@ async function listByStateUserBook(userBooks) {
 
     userBooks.forEach(book => {
         if (book.state in booksByState) {
-            booksByState[book.state].push(book);
+            const bookDataMain = new BookDataMain(
+                book.book_details.title,
+                book.book_details.author,
+                book.year_read,
+                book.book_details.genre
+            );
+            booksByState[book.state].push(bookDataMain);
         }
     });
 
