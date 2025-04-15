@@ -1,4 +1,4 @@
-const BookDataMain = require('../../../domain/entities/BookDataMain');
+const BookDataMain = require('../../../domain/entities/BookDetails');
 /**
  * @module listByStateUserBook
  * @description Modulo para listar libros de un usuario por estado
@@ -14,12 +14,18 @@ async function listByStateUserBook(userBooks) {
 
     userBooks.forEach(book => {
         if (book.state in booksByState) {
-            const bookDataMain = new BookDataMain(
-                book.book_details.title,
-                book.book_details.author,
-                book.year_read,
-                book.book_details.genre
-            );
+            const bookDataMain = new BookDataMain({
+                state           : book.state,
+                year_read       : book.year_read,
+                rating          : book.rating,
+                review          : book.review,
+                title           : book.book_details.title,
+                genre           : book.book_details.genre,
+                publication_year: book.book_details.publication_year,
+                isbn            : book.book_details.isbn,
+                author          : book.book_details.author,
+                editorial       : book.book_details.editorial,
+            });
             booksByState[book.state].push(bookDataMain);
         }
     });

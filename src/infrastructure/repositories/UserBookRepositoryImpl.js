@@ -148,7 +148,7 @@ class UserBookRepositoryImpl extends UserBookRepository{
                             title           : '$bookDetails.title',
                             genre           : '$bookDetails.genre',
                             publication_year: '$bookDetails.publication_year',
-                            published       : '$bookDetails.isbn',
+                            isbn       : '$bookDetails.isbn',
                             author: '$authorDetails.name',
                             editorial: '$editorialDetails.name'
                         }
