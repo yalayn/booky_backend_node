@@ -145,12 +145,15 @@ class UserBookRepositoryImpl extends UserBookRepository{
                         registeredAt: '$books.registeredAt',
                         updatedAt   : '$books.updatedAt',
                         book_details: {
-                            title           : '$bookDetails.title',
-                            genre           : '$bookDetails.genre',
-                            publication_year: '$bookDetails.publication_year',
-                            isbn       : '$bookDetails.isbn',
-                            author: '$authorDetails.name',
-                            editorial: '$editorialDetails.name'
+                            title             : '$bookDetails.title',
+                            genre             : '$bookDetails.genre',
+                            publication_year  : '$bookDetails.publication_year',
+                            isbn              : '$bookDetails.isbn',
+                            descriptions_short: '$bookDetails.descriptions_short',
+                            descriptions_long : '$bookDetails.descriptions_long',
+                            path_cover        : '$bookDetails.path_cover',
+                            author            : '$authorDetails.name',
+                            editorial         : '$editorialDetails.name'
                         }
                     }
                 }

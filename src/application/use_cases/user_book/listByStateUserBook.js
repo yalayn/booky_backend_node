@@ -15,16 +15,20 @@ async function listByStateUserBook(userBooks) {
     userBooks.forEach(book => {
         if (book.state in booksByState) {
             const bookDataMain = new BookDataMain({
-                state           : book.state,
-                year_read       : book.year_read,
-                rating          : book.rating,
-                review          : book.review,
-                title           : book.book_details.title,
-                genre           : book.book_details.genre,
-                publication_year: book.book_details.publication_year,
-                isbn            : book.book_details.isbn,
-                author          : book.book_details.author,
-                editorial       : book.book_details.editorial,
+                book_id           : book.book_id,
+                state             : book.state,
+                year_read         : book.year_read,
+                rating            : book.rating,
+                review            : book.review,
+                title             : book.book_details.title,
+                genre             : book.book_details.genre,
+                publication_year  : book.book_details.publication_year,
+                isbn              : book.book_details.isbn,
+                descriptions_short: book.book_details.descriptions_short,
+                descriptions_long : book.book_details.descriptions_long,
+                path_cover        : book.book_details.path_cover,
+                author            : book.book_details.author,
+                editorial         : book.book_details.editorial,
             });
             booksByState[book.state].push(bookDataMain);
         }

@@ -9,9 +9,9 @@ const authMiddleware         = require('../middleware/auth');
 // Ruta para crear un usuario
 router.post('/register', authMiddleware, async (req, res) => {
   const bookRepository = new BookRepositoryImpl();
-  const { title,_author_id,_editorial_id,genre,publication_year,isbn } = req.body;
+  const { title,_author_id,_editorial_id,genre,publication_year,isbn,descriptions_short,descriptions_long,path_cover } = req.body;
   try {
-    const book = await registerBook(bookRepository, { title,_author_id,_editorial_id,genre,publication_year,isbn });
+    const book = await registerBook(bookRepository, { title,_author_id,_editorial_id,genre,publication_year,isbn,descriptions_short,descriptions_long,path_cover });
     res.status(201).json(book);
   } catch (error) {
     res.status(400).json({ error: error.message });
