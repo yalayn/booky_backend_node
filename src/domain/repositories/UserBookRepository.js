@@ -25,6 +25,14 @@ class UserBookRepository {
     async updateState(userId, bookId, newState) {
       throw new Error('Not implemented'); 
     }
+
+    async registreReview(userId, bookId, reviewText, rating) {
+      throw new Error('Not implemented');
+    }
+
+    async getBookReviews(bookId) {
+      throw new Error('Not implemented');
+    }
     
   }
   

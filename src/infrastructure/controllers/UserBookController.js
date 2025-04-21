@@ -7,6 +7,7 @@ const registerUserBook       = require('../../application/use_cases/user_book/re
 const removeUserBook         = require('../../application/use_cases/user_book/removeUserBook');
 const updateStateUserBook    = require('../../application/use_cases/user_book/updateStateUserBook');
 const listByStateUserBook    = require('../../application/use_cases/user_book/listByStateUserBook');
+const registerReviewUserBook = require('../../application/use_cases/user_book/registreReviewUserBook');
 
 // Ruta para agregar un nuevo libro a un usuario
 router.post('/register', authMiddleware, async (req, res) => {
@@ -91,6 +92,24 @@ router.get('/list_by_state', authMiddleware, async (req, res) => {
         res.status(200).json(listUserBook);
     } catch (error) {
         res.status(500).json({ error: error.message });
+    }
+});
+
+router.post('/register_review', authMiddleware, async (req, res) => {
+    const userRepository     = new UserRepositoryImpl();
+    const userBookRepository = new UserBookRepositoryImpl();
+    const { book_id, review_text, rating } = req.body;
+    try {
+        const user = await userRepository.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        console.log('user', user);
+        const userId = user._id;
+        const userBook = await registerReviewUserBook(userBookRepository, {userId, bookId: book_id, reviewText: review_text, rating});
+        res.status(201).json(userBook);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
     }
 });
 

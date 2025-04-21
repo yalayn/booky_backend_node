@@ -46,10 +46,6 @@ const UserSchema = new mongoose.Schema({
         type: Number,
         default: 0,
       },
-      review: {
-        type: String,
-        default: ''
-      },
       registeredAt: {
         type: Date,
         default: Date.now
