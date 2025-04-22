@@ -104,7 +104,6 @@ router.post('/register_review', authMiddleware, async (req, res) => {
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
-        console.log('user', user);
         const userId = user._id;
         const userBook = await registerReviewUserBook(userBookRepository, {userId, bookId: book_id, reviewText: review_text, rating});
         res.status(201).json(userBook);

@@ -69,13 +69,38 @@ class UserBookRepositoryImpl extends UserBookRepository{
                     $unwind: '$editorialDetails' // Descomponer el arreglo de detalles de la editorial
                 },
                 {
+                    $lookup: {
+                        from: 'reviews', // Nombre de la colección de reviews
+                        let: { bookId: '$books.book_id', userId: '$_id' }, // Variables locales para usar en el pipeline
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $and: [
+                                            { $eq: ['$book_id', '$$bookId'] }, // Coincidir con el book_id
+                                            { $eq: ['$user_id', '$$userId'] }  // Coincidir con el user_id
+                                        ]
+                                    }
+                                }
+                            }
+                        ],
+                        as: 'reviews' // Nombre del campo donde se almacenarán los reviews
+                    }
+                },
+                {
+                    $unwind: {
+                        path: '$reviews', // Descomponer el arreglo de reviews
+                        preserveNullAndEmptyArrays: true // Permitir que los libros sin reviews no sean eliminados
+                    }
+                },
+                {
                     $project: {
                         _id: 0, // Excluir el _id del usuario
                         book_id     : '$books.book_id',
                         state       : '$books.state',
                         year_read   : '$books.year_read',
-                        rating      : '$books.rating',
-                        review      : '$books.review',
+                        rating      : '$reviews.rating',
+                        review      : '$reviews.review',
                         registeredAt: '$books.registeredAt',
                         updatedAt   : '$books.updatedAt',
                         book_details: {
