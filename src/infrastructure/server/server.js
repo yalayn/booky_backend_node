@@ -10,6 +10,9 @@ const authorController    = require('../controllers/AuthorController');
 const editorialController = require('../controllers/EditorialController');
 const connectDB           = require('../database/database');
 const userBookController  = require('../controllers/UserBookController');
+const path                = require('path');
+
+const PATH_UPLOADS = path.join(__dirname, '../../../uploads');
 
 dotenv.config();
 
@@ -38,6 +41,9 @@ app.use('/api/editorial', editorialController);
 
 //RUTA DE API USERBOOK
 app.use('/api/userbook', userBookController);
+
+// Descarga de archivos
+app.use('/uploads', express.static(PATH_UPLOADS));
 
 app.listen(port, () => {
   console.log(`Servidor escuchando en http://localhost:${port}`);

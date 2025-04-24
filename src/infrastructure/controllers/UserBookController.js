@@ -83,12 +83,13 @@ router.get('/list', authMiddleware, async (req, res) => {
 router.get('/list_by_state', authMiddleware, async (req, res) => {
     const userBookRepository = new UserBookRepositoryImpl();
     try {
-        const userId = req.user.id;
+        const baseUrl   = `${req.protocol}://${req.get('host')}`;
+        const userId    = req.user.id;
         const userBooks = await userBookRepository.findUserBooksWithDetails(userId);
         if (!userBooks) {
             res.status(404).json({ error: 'User books not found' });
         }
-        const listUserBook = await listByStateUserBook(userBooks);
+        const listUserBook = await listByStateUserBook(userBooks, baseUrl);
         res.status(200).json(listUserBook);
     } catch (error) {
         res.status(500).json({ error: error.message });

@@ -1,11 +1,12 @@
-const BookDataMain = require('../../../domain/entities/BookDetails');
+const BookDataMain = require('../../../domain/entities/BookDataMain');
 /**
  * @module listByStateUserBook
  * @description Modulo para listar libros de un usuario por estado
  * @param {Array} userBooks - Array de libros del usuario
+ * @param {string} baseUrl - URL base del proyecto
  * @returns {Object} - Objeto con los libros agrupados por estado
  */
-async function listByStateUserBook(userBooks) {
+async function listByStateUserBook(userBooks, baseUrl) {
     const booksByState = {
         to_read: [],
         reading: [],
@@ -14,6 +15,7 @@ async function listByStateUserBook(userBooks) {
 
     userBooks.forEach(book => {
         if (book.state in booksByState) {
+            const coverUrl = `${baseUrl}/${book.book_details.path_cover}`;
             const bookDataMain = new BookDataMain({
                 book_id           : book.book_id,
                 state             : book.state,
@@ -26,7 +28,7 @@ async function listByStateUserBook(userBooks) {
                 isbn              : book.book_details.isbn,
                 descriptions_short: book.book_details.descriptions_short,
                 descriptions_long : book.book_details.descriptions_long,
-                path_cover        : book.book_details.path_cover,
+                cover_url         : coverUrl,
                 author            : book.book_details.author,
                 editorial         : book.book_details.editorial,
             });
