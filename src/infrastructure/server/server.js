@@ -10,6 +10,7 @@ const authorController    = require('../controllers/AuthorController');
 const editorialController = require('../controllers/EditorialController');
 const connectDB           = require('../database/database');
 const userBookController  = require('../controllers/UserBookController');
+const searchBookController = require('../controllers/SearchBookController');
 const path                = require('path');
 
 const PATH_UPLOADS = path.join(__dirname, '../../../uploads');
@@ -27,6 +28,9 @@ app.use(cors({ origin: 'http://localhost:3000' }));
 
 app.use(bodyParser.json());
 
+// Descarga de archivos
+app.use('/uploads', express.static(PATH_UPLOADS));
+
 //RUTA DE API BOOK
 app.use('/api/book', bookController);
 
@@ -42,8 +46,8 @@ app.use('/api/editorial', editorialController);
 //RUTA DE API USERBOOK
 app.use('/api/userbook', userBookController);
 
-// Descarga de archivos
-app.use('/uploads', express.static(PATH_UPLOADS));
+// Buscar informacion de libros.
+app.use('/api/search', searchBookController);
 
 app.listen(port, () => {
   console.log(`Servidor escuchando en http://localhost:${port}`);
