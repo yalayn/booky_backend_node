@@ -11,7 +11,20 @@ class AuthorRepositoryImpl extends AuthorRepository {
     async save(author) {
         const newAuthor = new AuthorModel(author);
         await newAuthor.save();
-        return new Author(newAuthor._id, newAuthor.name, newAuthor.country, newAuthor.birthday);
+        return new Author(newAuthor._id, newAuthor.key, newAuthor.name, newAuthor.country, newAuthor.birthday);
+    }
+
+    async update(author) {
+        const updatedAuthor = await AuthorModel.findByIdAndUpdate(author._id, author, { new: true });
+        if (updatedAuthor) {
+            return new Author(updatedAuthor._id, updatedAuthor.key, updatedAuthor.name, updatedAuthor.country, updatedAuthor.birthday);
+        }
+        return null;
+    }
+
+    async delete(_id) {
+        const deletedAuthor = await AuthorModel.findByIdAndDelete(_id);
+        return deletedAuthor;
     }
 
     async findById(id) {

@@ -3,6 +3,14 @@ class AuthorRepository {
     throw new Error('Not implemented');
   }
 
+  async update(author) {
+    throw new Error('Not implemented');
+  }
+
+  async delete(id) {
+    throw new Error('Not implemented');
+  }
+
   async findAll() {
     throw new Error('Not implemented');
   }

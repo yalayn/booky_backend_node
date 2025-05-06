@@ -5,6 +5,11 @@ const AuthorSchema = new mongoose.Schema({
         type: Types.ObjectId,
         required: true
     },
+    key: { 
+        type: String, 
+        required: true, 
+        unique: true 
+    },
     name: { 
         type: String, 
         required: true 
