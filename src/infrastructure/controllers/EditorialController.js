@@ -6,10 +6,38 @@ const authMiddleware          = require('../middleware/auth');
 
 router.post('/register', authMiddleware, async (req, res) => {
     const editorialRepository = new EditorialRepositoryImpl();
-    const { name, country, founding_date } = req.body;
+    const { key, name, country, founding_date } = req.body;
     try {
-        const editorial = await registerEditorial(editorialRepository, { name, country, founding_date });
+        const editorial = await registerEditorial(editorialRepository, { key, name, country, founding_date });
         res.status(201).json(editorial);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
+router.put('/update', authMiddleware, async (req, res) => {
+    const editorialRepository = new EditorialRepositoryImpl();
+    const { id, key, name, country, founding_date } = req.body;
+    try {
+        const editorial = await editorialRepository.update({ _id: id, key, name, country, founding_date });
+        if (!editorial) {
+            return res.status(404).json({ error: 'Editorial not found' });
+        }
+        res.status(200).json(editorial);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
+router.delete('/delete/:id', authMiddleware, async (req, res) => {
+    const editorialRepository = new EditorialRepositoryImpl();
+    const { id } = req.params;
+    try {
+        const editorial = await editorialRepository.delete(id);
+        if (!editorial) {
+            return res.status(404).json({ error: 'Editorial not found' });
+        }
+        res.status(200).json({ message: 'Editorial deleted successfully' });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }

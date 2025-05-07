@@ -14,6 +14,19 @@ class EditorialRepositoryImpl extends EditorialRepository {
         return new Editorial(newEditorial._id, newEditorial.name, newEditorial.country, newEditorial.birthday);
     }
 
+    async update(editorial) {
+        const updatedEditorial = await EditorialModel.findByIdAndUpdate(editorial._id, editorial, { new: true });
+        if (updatedEditorial) {
+            return new Editorial(updatedEditorial._id, updatedEditorial.key, updatedEditorial.name, updatedEditorial.country, updatedEditorial.birthday);
+        }
+        return null;
+    }
+
+    async delete(id) {
+        const deletedEditorial = await EditorialModel.findByIdAndDelete(id);
+        return deletedEditorial;
+    }
+    
     async findById(id) {
         const Editorial = await EditorialModel.findById(id);
         if (Editorial) {
