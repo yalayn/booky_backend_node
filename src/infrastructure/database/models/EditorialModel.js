@@ -7,6 +7,11 @@ const EditorialSchema = new mongoose.Schema({
     },
     key: { 
         type: String, 
+        required: false, 
+        unique: true 
+    },
+    normalizedName: {
+        type: String, 
         required: true, 
         unique: true 
     },
