@@ -7,6 +7,10 @@ const AuthorSchema = new mongoose.Schema({
     },
     key: { 
         type: String, 
+        required: false
+    },
+    normalizedName: {
+        type: String, 
         required: true, 
         unique: true 
     },
@@ -19,8 +23,17 @@ const AuthorSchema = new mongoose.Schema({
         required: true 
     },
     birthday: { 
-        type: Date
+        type: Date, 
+        required: true 
     },
+    createdAt: { 
+        type: Date, 
+        default: Date.now 
+    },
+    updatedAt: { 
+        type: Date, 
+        default: Date.now 
+    }
 }, 
 { timestamps: true }
 );
