@@ -14,6 +14,16 @@ class BookRepositoryImpl extends BookRepository {
     return new Book(newBook._id,newBook.title,newBook.author_id,newBook.editorial_id,newBook.genre,newBook.publication_year,newBook.isbn);
   }
 
+  async upsert(book) {
+    const existingBook = await BookModel.findOne({ isbn: book.isbn });
+    return existingBook || this.save(book);
+  }
+
+  async delete(_id) {
+    const deletedBook = await BookModel.findByIdAndDelete(_id);
+    return deletedBook;
+  }
+  
   async findById(id) {
     const Book = await BookModel.findOne({id});
     if (Book) {
@@ -34,6 +44,14 @@ class BookRepositoryImpl extends BookRepository {
     const Books = await BookModel.find({editorial_id});
     if (Books) {
       return Books;
+    }
+    return null;
+  }
+
+  async findByIsbn(isbn) {
+    const Book = await BookModel.findOne({isbn});
+    if (Book) {
+      return Book;
     }
     return null;
   }
