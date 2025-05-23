@@ -1,13 +1,49 @@
 const express        = require('express');
 const router         = express.Router();
 const authMiddleware = require('../middleware/auth');
-const UserBookRepositoryImpl = require('../repositories/UserBookRepositoryImpl');
-const UserRepositoryImpl     = require('../repositories/UserRepositoryImpl');
-const registerUserBook       = require('../../application/use_cases/user_book/registerUserBook');
-const removeUserBook         = require('../../application/use_cases/user_book/removeUserBook');
-const updateStateUserBook    = require('../../application/use_cases/user_book/updateStateUserBook');
-const listByStateUserBook    = require('../../application/use_cases/user_book/listByStateUserBook');
-const registerReviewUserBook = require('../../application/use_cases/user_book/registreReviewUserBook');
+
+const UserBookRepositoryImpl      = require('../repositories/UserBookRepositoryImpl');
+const UserRepositoryImpl          = require('../repositories/UserRepositoryImpl');
+const AuthorRepositoryImpl        = require('../repositories/AuthorRepositoryImpl');
+const EditorialRepositoryImpl     = require('../repositories/EditorialRepositoryImpl');
+const BookRepositoryImpl          = require('../repositories/BookRepositoryImpl');
+const registerUserBookIfNotExists = require('../../application/use_cases/user_book/registerUserBookIfNotExists');
+const registerUserBook            = require('../../application/use_cases/user_book/registerUserBook');
+const removeUserBook              = require('../../application/use_cases/user_book/removeUserBook');
+const updateStateUserBook         = require('../../application/use_cases/user_book/updateStateUserBook');
+const listByStateUserBook         = require('../../application/use_cases/user_book/listByStateUserBook');
+const registerReviewUserBook      = require('../../application/use_cases/user_book/registreReviewUserBook');
+
+router.post('/add', authMiddleware, async (req, res) => {
+    const userRepository      = new UserRepositoryImpl();
+    const userBookRepository  = new UserBookRepositoryImpl();
+    const authorRepository    = new AuthorRepositoryImpl();
+    const editorialRepository = new EditorialRepositoryImpl();
+    const bookRepository      = new BookRepositoryImpl();
+
+    console.log('req.body', req.body);
+
+    const { title, genre, publication_year, isbn, descriptions_short, descriptions_long, cover_i, editorial, author } = req.body;
+    try {
+        const user = await userRepository.findById(req.user.id);
+        
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        if (!title || !genre || !publication_year || !isbn || !descriptions_short || !descriptions_long || !cover_i || !editorial || !author) {
+            return res.status(400).json({ error: 'All fields are required..' });
+        }
+
+        const bookData = { title, genre, publication_year, isbn, descriptions_short, descriptions_long, cover_i, editorial,author }
+        const userId   = user.id;
+        const userBook = await registerUserBookIfNotExists(userBookRepository, authorRepository, editorialRepository, bookRepository, {userId, bookData});
+
+        res.status(201).json(userBook);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+});
 
 // Ruta para agregar un nuevo libro a un usuario
 router.post('/register', authMiddleware, async (req, res) => {
