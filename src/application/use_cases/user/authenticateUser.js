@@ -17,7 +17,7 @@ const authenticateUser = async (userRepository, { username, password }) => {
   const payload = { id: user.id, username: user.username };
   const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION_TIME });
 
-  return { token };
+  return { token:token, user: { id: user.id, username: user.username, name: user.name } };
 };
 
 module.exports = { authenticateUser };

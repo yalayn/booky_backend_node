@@ -12,7 +12,7 @@ const { UserNotFoundError, InvalidPasswordError } = require('../../application/e
 
 
 // Ruta para crear un usuario
-router.post('/register', authMiddleware, async (req, res) => {
+router.post('/register', async (req, res) => {
   const userRepository = new UserRepositoryImpl();
   const { name, username, password } = req.body;
   try {
@@ -61,9 +61,12 @@ router.post('/login', async (req, res) => {
   const userRepository = new UserRepositoryImpl();
   const { username, password } = req.body;
   try {
-    const { token } = await authenticateUser(userRepository, { username, password });
+    const { token, user } = await authenticateUser(userRepository, { username, password });
     response["success"] = true;
-    response["data"]    = token;
+    response["data"]    = {
+      token: token,
+      user : user
+    };
     res.status(200).json({ response });
   } catch (error) {
     if (error instanceof UserNotFoundError || error instanceof InvalidPasswordError) {
