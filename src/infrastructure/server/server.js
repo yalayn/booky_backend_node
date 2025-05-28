@@ -11,6 +11,7 @@ const editorialController = require('../controllers/EditorialController');
 const connectDB           = require('../database/database');
 const userBookController  = require('../controllers/UserBookController');
 const searchBookController = require('../controllers/SearchBookController');
+const readingSessionsController = require('../controllers/ReadingSessionsController');
 const path                = require('path');
 
 const PATH_UPLOADS = path.join(__dirname, '../../../uploads');
@@ -48,6 +49,8 @@ app.use('/api/userbook', userBookController);
 
 // Buscar informacion de libros.
 app.use('/api/search', searchBookController);
+
+app.use('/api/reading-sessions',readingSessionsController);
 
 app.listen(port, () => {
   console.log(`Servidor escuchando en http://localhost:${port}`);
