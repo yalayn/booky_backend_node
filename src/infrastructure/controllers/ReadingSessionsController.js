@@ -8,15 +8,17 @@ const listReadingSessionsByUser = require('../../application/use_cases/readingSe
 const listReadingSessionsByUserBook = require('../../application/use_cases/readingSession/listReadingSessionsByUserBook');
 const countReadingSessionsByUser = require('../../application/use_cases/readingSession/countReadingSessionsByUser');
 const mongoose = require('mongoose');
+const now = new Date();
 
 router.post('/register', authMiddleware, async (req, res) => {
     const readingSessionsRepository = new ReadingSessionsRepositoryImpl();
-    const { book_id, seconds, date, lastPageRead } = req.body;
+    let { book_id, seconds, date, lastPageRead } = req.body;
     try {
         const userId = await getUserId(req);
-        if (!book_id || !seconds || !date) {
+        if (!book_id || !seconds) {
             return res.status(400).json({ error: 'All fields are required' });
         }
+        date = date ? new Date(date) : new Date(now.getFullYear(), now.getMonth(), now.getDate());
         const readingSession = await registerReadingSession(readingSessionsRepository, { userId, book_id, seconds, date, lastPageRead });
         res.status(201).json(readingSession);
     } catch (error) {
@@ -111,7 +113,7 @@ router.get('/user_by_book', authMiddleware, async (req, res) => {
     try {
         const listReadingSessions = await readingSessionsRepository.findByUserIdBookId(userId);
         if (!listReadingSessions || listReadingSessions.length === 0) {
-            return res.status(404).json({ error: 'No reading sessions found for this user' });
+            return res.status(200).json({ error: 'No reading sessions found for this user' });
         }
         const data = await listReadingSessionsByUserBook(listReadingSessions);
         res.status(200).json({"success": true, "data": data, "message": "Reading sessions retrieved successfully"
@@ -125,17 +127,17 @@ router.get('/user_by_book', authMiddleware, async (req, res) => {
 router.get('/user_count_day', authMiddleware, async (req, res) => {
     const readingSessionsRepository = new ReadingSessionsRepositoryImpl();
     const userId = await getUserId(req);
-    const date = req.body.date ? new Date(req.body.date) : new Date();
+    const date = req.body.date ? new Date(req.body.date) : new Date(now.getFullYear(), now.getMonth(), now.getDate());
     try {
         const listReadingSessions = await readingSessionsRepository.findByUserIDate(userId, date);
         if (!listReadingSessions || listReadingSessions.length === 0) {
-            return res.status(404).json({ error: 'No reading sessions found for this user' });
+            return res.status(200).json({ success:false, error: 'No reading sessions found for this user',data: [] });
         }
         const data = await countReadingSessionsByUser(listReadingSessions);
         res.status(200).json({"success": true, "data": data, "message": "Reading sessions retrieved successfully"
         });
     } catch (error) {
-        res.status(400).json({ "success":false, error: error.message });
+        res.status(400).json({ success:false, error: error.message });
     }
 }
 );

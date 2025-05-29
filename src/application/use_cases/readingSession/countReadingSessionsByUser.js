@@ -4,7 +4,7 @@ async function countReadingSessionsByUser(listReadingSessions){
     for (const session of listReadingSessions) {
         time = time + session.seconds;
     }
-    return formatTime(time);
+    return {"hours":formatTime(time), seconds:time};
 }
 
 const formatTime = (readingTime) => {
