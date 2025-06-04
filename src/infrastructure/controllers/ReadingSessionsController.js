@@ -29,9 +29,10 @@ router.post('/register', authMiddleware, async (req, res) => {
 
 router.put('/update', authMiddleware, async (req, res) => {
     const readingSessionsRepository = new ReadingSessionsRepositoryImpl();
-    const { id, userId, bookId, startDate, endDate, pagesRead } = req.body;
+    const { id, book_id, seconds, date, last_page_read } = req.body;
     try {
-        const readingSession = await readingSessionsRepository.update({ _id: id, userId, bookId, startDate, endDate, pagesRead });
+        const userId = await getUserId(req);
+        const readingSession = await readingSessionsRepository.update({ _id: id, user_id:userId, book_id, seconds, date, last_page_read });
         if (!readingSession) {
             return res.status(404).json({ error: 'Reading session not found' });
         }
@@ -72,19 +73,20 @@ router.get('/find/:id', authMiddleware, async (req, res) => {
 }
 );
 
-router.get('/user', authMiddleware, async (req, res) => {
+router.get('/history', authMiddleware, async (req, res) => {
+    const baseUrl   = `${req.protocol}://${req.get('host')}`;
     const readingSessionsRepository = new ReadingSessionsRepositoryImpl();
     const userId = await getUserId(req);
     try {
         const listReadingSessions = await readingSessionsRepository.findByUserId(userId);
         if (!listReadingSessions || listReadingSessions.length === 0) {
-            return res.status(404).json({ error: 'No reading sessions found for this user' });
+            return res.status(200).json({ success:false, data:[], error: 'No reading sessions found for this user' });
         }
-        const data = await listReadingSessionsByUser(listReadingSessions);
-        res.status(200).json({"success": true, "data": data, "message": "Reading sessions retrieved successfully"
+        const data = await listReadingSessionsByUser(listReadingSessions,baseUrl);
+        res.status(200).json({success: true, "data": data, "message": "Reading sessions retrieved successfully"
         });
     } catch (error) {
-        res.status(400).json({ "success":false, error: error.message });
+        res.status(400).json({success:false, error: error.message });
     }
 }
 );
@@ -124,7 +126,7 @@ router.get('/user_by_book', authMiddleware, async (req, res) => {
 }
 );
 
-router.get('/user_count_day', authMiddleware, async (req, res) => {
+router.get('/today', authMiddleware, async (req, res) => {
     const readingSessionsRepository = new ReadingSessionsRepositoryImpl();
     const userId = await getUserId(req);
     const date = req.body.date ? new Date(req.body.date) : new Date(now.getFullYear(), now.getMonth(), now.getDate());

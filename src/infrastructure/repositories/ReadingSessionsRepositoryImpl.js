@@ -20,7 +20,7 @@ class ReadingSessionsRepositoryImpl extends ReadingSessionsRepository{
         if (!existingSession) { throw new Error('Reading session not found'); }
         const updatedSession = await ReadingSessionModel.findByIdAndUpdate(readingSession._id, readingSession, { new: true });
         if (updatedSession) {
-            return new ReadingSession(updatedSession._id, updatedSession.userId, updatedSession.bookId, updatedSession.startDate, updatedSession.endDate, updatedSession.pagesRead);
+            return new ReadingSession({_id:updatedSession._id, userId:updatedSession.user_id, bookId:updatedSession.book_id, seconds:updatedSession.seconds, date:updatedSession.date, lastPageRead:updatedSession.last_page_read});
         }
         return null;
     }
@@ -39,9 +39,13 @@ class ReadingSessionsRepositoryImpl extends ReadingSessionsRepository{
     }
 
     async findByUserId(userId) {
-        // console.log('Finding reading sessions for user:', userId);
-        const sessions = await ReadingSessionModel.find({ user_id:userId });
-        return sessions.map(session => new ReadingSession({_id:session._id, userId:session.user_id, bookId:session.book_id, seconds:session.seconds, date:session.date, lastPageRead:session.last_page_read}));
+        const sessions = await ReadingSessionModel.find({ user_id: userId }).populate('book_id');
+        if (!sessions || sessions.length === 0) {
+            return [];
+        }
+        return sessions;
+        // return sessions.map(session => {"_id":session._id, "user_id":session.user_id, bookId:session.book_id, seconds:session.seconds, date:session.date, lastPageRead:session.last_page_read});
+        // return sessions.map(session => new ReadingSession({_id:session._id, userId:session.user_id, bookId:session.book_id, seconds:session.seconds, date:session.date, lastPageRead:session.last_page_read}));
     }
 
     async findByUserIdAndBookId(userId, bookId) {
