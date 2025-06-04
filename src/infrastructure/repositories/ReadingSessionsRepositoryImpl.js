@@ -16,11 +16,34 @@ class ReadingSessionsRepositoryImpl extends ReadingSessionsRepository{
     }
     
     async update(readingSession) {
+        const SECOND_TODAY = 86400; // 24 horas en segundos
+
         const existingSession = await ReadingSessionModel.findOne({ _id: readingSession._id });
-        if (!existingSession) { throw new Error('Reading session not found'); }
+        if (!existingSession) {
+            // Retornar un objeto con mensaje en vez de lanzar error para evitar 404
+            return { success:false, data:[], message: 'Reading session not found' };
+        }
+        
+        const startOfDay = new Date(readingSession.date);
+        startOfDay.setUTCHours(0, 0, 0, 0);
+        const endOfDay = new Date(readingSession.date);
+        endOfDay.setUTCHours(23, 59, 59, 999);
+
+        const sessions = await ReadingSessionModel.find({
+            user_id: readingSession.user_id,
+            date: { $gte: startOfDay, $lte: endOfDay }
+        });
+
+        const totalSeconds = parseInt(sessions.reduce((sum, s) => sum + (s.seconds || 0), 0)) + parseInt((readingSession.seconds || 0)) - parseInt(existingSession.seconds || 0);
+
+        if (totalSeconds > SECOND_TODAY) {
+            return { success:false, data:[], message: 'Las horas no pueden exceder el dia (24 horas)' };
+        }
+        
         const updatedSession = await ReadingSessionModel.findByIdAndUpdate(readingSession._id, readingSession, { new: true });
         if (updatedSession) {
-            return new ReadingSession({_id:updatedSession._id, userId:updatedSession.user_id, bookId:updatedSession.book_id, seconds:updatedSession.seconds, date:updatedSession.date, lastPageRead:updatedSession.last_page_read});
+            const data = new ReadingSession({_id:updatedSession._id, userId:updatedSession.user_id, bookId:updatedSession.book_id, seconds:updatedSession.seconds, date:updatedSession.date, lastPageRead:updatedSession.last_page_read});
+            return {success:true, data:data, message: 'Reading session updated successfully'}
         }
         return null;
     }
@@ -44,8 +67,6 @@ class ReadingSessionsRepositoryImpl extends ReadingSessionsRepository{
             return [];
         }
         return sessions;
-        // return sessions.map(session => {"_id":session._id, "user_id":session.user_id, bookId:session.book_id, seconds:session.seconds, date:session.date, lastPageRead:session.last_page_read});
-        // return sessions.map(session => new ReadingSession({_id:session._id, userId:session.user_id, bookId:session.book_id, seconds:session.seconds, date:session.date, lastPageRead:session.last_page_read}));
     }
 
     async findByUserIdAndBookId(userId, bookId) {
