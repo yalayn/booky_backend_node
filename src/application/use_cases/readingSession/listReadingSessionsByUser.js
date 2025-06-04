@@ -4,7 +4,6 @@ async function listReadingSessionsByUser(listReadingSessions,baseUrl){
     const data = []
     for (const session of listReadingSessions) {
         const book    = session.book_id;
-        let bookId = null;
         let bookTitle = 'Unknown Title';
         let coverUrl  = `${baseUrl}/assets/images/default_cover.jpg`;
         if (book && typeof book === 'object') {
