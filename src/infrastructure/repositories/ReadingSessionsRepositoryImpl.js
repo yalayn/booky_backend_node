@@ -62,7 +62,9 @@ class ReadingSessionsRepositoryImpl extends ReadingSessionsRepository{
     }
 
     async findByUserId(userId) {
-        const sessions = await ReadingSessionModel.find({ user_id: userId }).populate('book_id');
+        const sessions = await ReadingSessionModel.find({ user_id: userId })
+            .populate('book_id')
+            .sort({ date: -1 }); // Ordenar por fecha descendente
         if (!sessions || sessions.length === 0) {
             return [];
         }
