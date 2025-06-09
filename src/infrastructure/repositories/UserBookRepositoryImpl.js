@@ -177,6 +177,7 @@ class UserBookRepositoryImpl extends UserBookRepository{
             if (!allowedStates.includes(newState)) {
                 throw new Error('Invalid state. Valid states are: ' + validStates.join(', '));
             }
+            
             const result = await UserModel.updateOne(
                 { id: userId, 'books.book_id': bookId }, // Buscar el usuario y el libro específico
                 { $set: { 'books.$.state': newState } } // Actualizar el campo state del libro encontrado

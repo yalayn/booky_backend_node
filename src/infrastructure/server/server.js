@@ -12,7 +12,7 @@ const connectDB           = require('../database/database');
 const userBookController  = require('../controllers/UserBookController');
 const searchBookController = require('../controllers/SearchBookController');
 const readingSessionsController = require('../controllers/ReadingSessionsController');
-const path                = require('path');
+const path = require('path');
 
 const PATH_UPLOADS = path.join(__dirname, '../../../uploads');
 

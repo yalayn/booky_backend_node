@@ -63,10 +63,7 @@ router.post('/login', async (req, res) => {
   try {
     const { token, user } = await authenticateUser(userRepository, { username, password });
     response["success"] = true;
-    response["data"]    = {
-      token: token,
-      user : user
-    };
+    response["data"]    = { token: token, user : user };
     res.status(200).json({ response });
   } catch (error) {
     if (error instanceof UserNotFoundError || error instanceof InvalidPasswordError) {
@@ -88,7 +85,6 @@ router.post('/logout', authMiddleware, (req, res) => {
   // Agregar el token a la lista negra en Redis
   redisClient.set(token, 'blacklisted', 'EX', process.env.JWT_EXPIRATION, (error) => {
     if (error) {
-      console.log(`*** Error logout:`,error);
       response["message"] = 'Internal server error';
       return res.status(500).json(response);
     }

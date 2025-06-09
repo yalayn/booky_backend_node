@@ -21,8 +21,6 @@ router.post('/add', authMiddleware, async (req, res) => {
     const editorialRepository = new EditorialRepositoryImpl();
     const bookRepository      = new BookRepositoryImpl();
 
-    console.log('req.body', req.body);
-
     const { title, genre, publication_year, isbn, descriptions_short, descriptions_long, cover_i, editorial, author } = req.body;
     try {
         const user = await userRepository.findById(req.user.id);
