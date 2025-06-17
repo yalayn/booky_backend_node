@@ -1,5 +1,6 @@
 // src/application/use_cases/user_book/registerUserBook.js
 const mongoose = require('mongoose');
+const UserModel = require('../../../infrastructure/database/models/UserModel');
 
 /**
  * Registers a user book in the repository.
@@ -13,7 +14,6 @@ const mongoose = require('mongoose');
 async function registerUserBookIfNotExists(userBookRepository, authorRepository, editorialRepository, bookRepository, {userId, bookData}) {
     
     if (!userId || !bookData) {
-        console.log(userId, bookData);
         throw new Error('User ID and bookData are required');
     }
 
@@ -21,7 +21,6 @@ async function registerUserBookIfNotExists(userBookRepository, authorRepository,
     let book   = await bookRepository.findByIsbn(bookData.isbn);
 
     if (!book) {
-        console.log('Book not found, creating new book');
 
         const author_id    = new mongoose.Types.ObjectId();
         const authorUpsert = { _id: author_id, key: bookData.author.key, name: bookData.author.name, country: bookData.author.country, birthday: bookData.author.birthday };
@@ -46,11 +45,22 @@ async function registerUserBookIfNotExists(userBookRepository, authorRepository,
             cover_i           : bookData.cover_i,
         };
         book = await bookRepository.upsert(bookUpsert);
-        
-        console.log('Book found', book);
     }
 
     bookId = book._id;
+
+    // Verificar si el usuario existe
+    const user = await UserModel.findOne({ id: userId });
+    if (!user) {
+        throw new Error('User not found');
+    }
+
+    // Verificar si el libro ya existe en el arreglo books
+    const bookExists = user.books.some(book => book.book_id.toString() === bookId.toString());
+    if (bookExists) {
+        throw new Error('Book already exists for this user');
+    }
+
     return await userBookRepository.add(userId, bookId);
 
 }

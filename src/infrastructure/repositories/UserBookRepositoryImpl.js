@@ -127,18 +127,6 @@ class UserBookRepositoryImpl extends UserBookRepository{
 
     async add(userId, bookId) {
         try {
-            // Verificar si el usuario existe
-            const user = await UserModel.findOne({ id: userId });
-            if (!user) {
-                throw new Error('User not found');
-            }
-
-            // Verificar si el libro ya existe en el arreglo books
-            const bookExists = user.books.some(book => book.book_id.toString() === bookId.toString());
-            if (bookExists) {
-                throw new Error('Book already exists for this user');
-            }
-
             // Agregar el libro al arreglo books
             const result = await UserModel.updateOne(
                 { id: userId },
@@ -172,11 +160,6 @@ class UserBookRepositoryImpl extends UserBookRepository{
 
     async updateState(userId, bookId, newState) {
         try {
-            // Validar que sea un estado válido
-            const allowedStates = UserModel.schema.path('books').schema.path('state').enumValues;
-            if (!allowedStates.includes(newState)) {
-                throw new Error('Invalid state. Valid states are: ' + validStates.join(', '));
-            }
             
             const result = await UserModel.updateOne(
                 { id: userId, 'books.book_id': bookId }, // Buscar el usuario y el libro específico
