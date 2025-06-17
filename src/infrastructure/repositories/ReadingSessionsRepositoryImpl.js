@@ -16,29 +16,6 @@ class ReadingSessionsRepositoryImpl extends ReadingSessionsRepository{
     }
     
     async update(readingSession) {
-        const SECOND_TODAY = 86400; // 24 horas en segundos
-
-        const existingSession = await ReadingSessionModel.findOne({ _id: readingSession._id });
-        if (!existingSession) {
-            // Retornar un objeto con mensaje en vez de lanzar error para evitar 404
-            return { success:false, data:[], message: 'Reading session not found' };
-        }
-        
-        const startOfDay = new Date(readingSession.date);
-        startOfDay.setUTCHours(0, 0, 0, 0);
-        const endOfDay = new Date(readingSession.date);
-        endOfDay.setUTCHours(23, 59, 59, 999);
-
-        const sessions = await ReadingSessionModel.find({
-            user_id: readingSession.user_id,
-            date: { $gte: startOfDay, $lte: endOfDay }
-        });
-
-        const totalSeconds = parseInt(sessions.reduce((sum, s) => sum + (s.seconds || 0), 0)) + parseInt((readingSession.seconds || 0)) - parseInt(existingSession.seconds || 0);
-
-        if (totalSeconds > SECOND_TODAY) {
-            return { success:false, data:[], message: 'Las horas no pueden exceder el dia (24 horas)' };
-        }
         
         const updatedSession = await ReadingSessionModel.findByIdAndUpdate(readingSession._id, readingSession, { new: true });
         if (updatedSession) {

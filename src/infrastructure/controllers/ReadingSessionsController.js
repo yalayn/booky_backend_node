@@ -32,7 +32,7 @@ router.put('/update', authMiddleware, async (req, res) => {
     const { id, book_id, seconds, date, last_page_read } = req.body;
     try {
         const userId = await getUserId(req);
-        const readingSession = await readingSessionsRepository.update({ _id: id, user_id:userId, book_id, seconds, date, last_page_read });
+        const readingSession = await readingSessionsRepository.update({ _id: id, userId, book_id: book_id, seconds, date, last_page_read });
         if (!readingSession) {
             return res.status(404).json({ success:false, data:[], message: 'Reading session not found' });
         }
