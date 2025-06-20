@@ -5,22 +5,21 @@ const mongoose = require('mongoose');
  * @param {*} param1 
  * @returns 
  */
-async function registerReadingSession(readingSessionsRepository,readingSessionData) {
-    const { userId, book_id, seconds, date, lastPageRead } = readingSessionData;
+const registerReadingSession = async (readingSessionsRepository,readingSessionData) => {
+    const { user_id, book_id, seconds, date, last_page_read } = readingSessionData;
 
-    if (!userId || !book_id || !seconds || !date) {
-        throw new Error('Missing required fields: userId, bookId, seconds, date');
+    if (!user_id || !book_id || !seconds || !date) {
+        throw new Error('Missing required fields: user_id, book_id, seconds, date');
     }
 
-    const bookId = new mongoose.Types.ObjectId(book_id);
     const _id = new mongoose.Types.ObjectId();
     const readingSession = {
         _id           : _id,
-        user_id       : userId,
-        book_id       : bookId,
+        user_id       : user_id,
+        book_id       : new mongoose.Types.ObjectId(book_id),
         seconds       : seconds,
         date          : date,
-        last_page_read: lastPageRead
+        last_page_read: last_page_read
     };
 
     const savedSession = await readingSessionsRepository.save(readingSession);

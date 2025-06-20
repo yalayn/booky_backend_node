@@ -2,6 +2,7 @@ const express = require('express');
 const router  = express.Router();
 const ReadingSessionsRepositoryImpl = require('../repositories/ReadingSessionsRepositoryImpl');
 const registerReadingSession = require('../../application/use_cases/readingSession/registerReadingSession');
+const updateReadingSession = require('../../application/use_cases/readingSession/updateReadingSession');
 const UserRepositoryImpl = require('../repositories/UserRepositoryImpl');
 const authMiddleware = require('../middleware/auth');
 const listReadingSessionsByUser = require('../../application/use_cases/readingSession/listReadingSessionsByUser');
@@ -12,14 +13,14 @@ const now = new Date();
 
 router.post('/register', authMiddleware, async (req, res) => {
     const readingSessionsRepository = new ReadingSessionsRepositoryImpl();
-    let { book_id, seconds, date, lastPageRead } = req.body;
+    let { book_id, seconds, date, last_page_read } = req.body;
     try {
         const userId = await getUserId(req);
         if (!book_id || !seconds) {
             return res.status(400).json({ error: 'All fields are required' });
         }
         date = date ? new Date(date) : new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        const readingSession = await registerReadingSession(readingSessionsRepository, { userId, book_id, seconds, date, lastPageRead });
+        const readingSession = await registerReadingSession(readingSessionsRepository, { user_id:userId, book_id, seconds, date, last_page_read });
         res.status(201).json(readingSession);
     } catch (error) {
         res.status(400).json({ error: error.message });
@@ -32,7 +33,8 @@ router.put('/update', authMiddleware, async (req, res) => {
     const { id, book_id, seconds, date, last_page_read } = req.body;
     try {
         const userId = await getUserId(req);
-        const readingSession = await readingSessionsRepository.update({ _id: id, userId, book_id: book_id, seconds, date, last_page_read });
+        const readingSession =  await updateReadingSession(readingSessionsRepository, { id, user_id: userId, book_id, seconds, date, last_page_read });
+        // const readingSession = await readingSessionsRepository.update({ _id: id, userId, book_id: book_id, seconds, date, last_page_read });
         if (!readingSession) {
             return res.status(404).json({ success:false, data:[], message: 'Reading session not found' });
         }
