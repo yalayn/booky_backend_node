@@ -6,6 +6,7 @@ const UserRepositoryImpl = require('../repositories/UserRepositoryImpl');
 const { registerUser } = require('../../application/use_cases/user/registerUser');
 const { findUserByUsername } = require('../../application/use_cases/user/findUser');
 const { authenticateUser } = require('../../application/use_cases/user/authenticateUser');
+const { authenticateUserWithToken } = require('../../application/use_cases/user/authenticateUserWithToken');
 const authMiddleware = require('../middleware/auth');
 const redisClient = require('../config/redis');
 const { UserNotFoundError, InvalidPasswordError } = require('../../application/errors');
@@ -61,10 +62,10 @@ router.post('/login', async (req, res) => {
   const userRepository = new UserRepositoryImpl();
   const { username, password } = req.body;
   try {
-    const { token, user } = await authenticateUser(userRepository, { username, password });
+    const { token, refresh_token, user } = await authenticateUser(userRepository, { username, password });
     response["success"] = true;
-    response["data"]    = { token: token, user : user };
-    res.status(200).json({ response });
+    response["data"]    = { token: token, refresh_token: refresh_token, user : user };
+    res.status(200).json(response);
   } catch (error) {
     if (error instanceof UserNotFoundError || error instanceof InvalidPasswordError) {
       response["message"] = error.message;
@@ -83,7 +84,7 @@ router.post('/logout', authMiddleware, (req, res) => {
   const token = req.header('Authorization').replace('Bearer ', '');
 
   // Agregar el token a la lista negra en Redis
-  redisClient.set(token, 'blacklisted', 'EX', process.env.JWT_EXPIRATION, (error) => {
+  redisClient.set(token, 'blacklisted', 'EX', process.env.JWT_EXPIRATION_TIME_EXP, (error) => {
     if (error) {
       response["message"] = 'Internal server error';
       return res.status(500).json(response);
@@ -92,6 +93,24 @@ router.post('/logout', authMiddleware, (req, res) => {
     response["message"] = 'Logged out successfully';
     res.status(200).json(response);
   });
+});
+
+router.post('/refresh-token', async (req, res) => {
+  let response  = {"success":false,"message":"","data":""}
+  const userRepository = new UserRepositoryImpl();
+  const refreshToken = req.header('refresh_token');
+
+  const newToken = await authenticateUserWithToken(userRepository, { refreshToken });
+  if (!newToken) {
+    response["message"] = 'Failed to refresh token';
+    return res.status(500).json(response);
+  }
+
+  console.log(`New token generated: ${newToken}`);
+
+  response["success"] = true;
+  response["data"] = { token: newToken };
+  res.status(200).json(response);
 });
 
 module.exports = router;
