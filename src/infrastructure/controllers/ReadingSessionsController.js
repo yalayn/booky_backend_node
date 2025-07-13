@@ -1,13 +1,13 @@
 const express = require('express');
 const router  = express.Router();
 const ReadingSessionsRepositoryImpl = require('../repositories/ReadingSessionsRepositoryImpl');
-const registerReadingSession = require('../../application/use_cases/readingSession/registerReadingSession');
-const updateReadingSession = require('../../application/use_cases/readingSession/updateReadingSession');
+const registerReadingSession = require('../../application/use_cases/reading_session/registerReadingSession');
+const updateReadingSession = require('../../application/use_cases/reading_session/updateReadingSession');
 const UserRepositoryImpl = require('../repositories/UserRepositoryImpl');
 const authMiddleware = require('../middleware/auth');
-const listReadingSessionsByUser = require('../../application/use_cases/readingSession/listReadingSessionsByUser');
-const listReadingSessionsByUserBook = require('../../application/use_cases/readingSession/listReadingSessionsByUserBook');
-const countReadingSessionsByUser = require('../../application/use_cases/readingSession/countReadingSessionsByUser');
+const listReadingSessionsByUser = require('../../application/use_cases/reading_session/listReadingSessionsByUser');
+const listReadingSessionsByUserBook = require('../../application/use_cases/reading_session/listReadingSessionsByUserBook');
+const countReadingSessionsByUser = require('../../application/use_cases/reading_session/countReadingSessionsByUser');
 const mongoose = require('mongoose');
 const now = new Date();
 

@@ -1,4 +1,4 @@
-const updateReadingSession = require('../../../../application/use_cases/readingSession/updateReadingSession');
+const updateReadingSession = require('../../../../application/use_cases/reading_session/updateReadingSession');
 const ReadingSessionModel = require('../../../../infrastructure/database/models/ReadingSessionsModel');
 
 jest.mock('../../../../infrastructure/database/models/ReadingSessionsModel');

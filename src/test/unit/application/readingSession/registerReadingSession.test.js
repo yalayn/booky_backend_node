@@ -1,4 +1,4 @@
-const registerReadingSession = require('../../../../application/use_cases/readingSession/registerReadingSession');
+const registerReadingSession = require('../../../../application/use_cases/reading_session/registerReadingSession');
 const mongoose = require('mongoose');
 
 describe('RegisterReadingSession Use Case', () => {
