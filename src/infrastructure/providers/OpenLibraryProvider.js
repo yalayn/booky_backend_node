@@ -8,12 +8,19 @@ class OpenLibraryProvider extends BookSearchProvider {
       params: { title }
     });
 
-    // Generate a unique ISBN with the pattern 000-0000000000
+    /**
+     * Genera un ISBN único con el patrón 000-0000000000
+     * @returns {string} ISBN único generado aleatoriamente.
+     */
     const generateUniqueISBN = () => {
       const randomPart = Math.floor(Math.random() * 1000000000).toString().padStart(9, '0');
       return `000-${randomPart}`;
     };
 
+    /**
+     * Genera una clave aleatoria de 10 caracteres en mayúsculas.
+     * @returns {string} Clave aleatoria generada.
+     */
     const generateRandomKey = () => Math.random().toString(36).substr(2, 10).toUpperCase();
 
     const books = response.data.docs.slice(0, 10).map(book => new BookDataSearch({

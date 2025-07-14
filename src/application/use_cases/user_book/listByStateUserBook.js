@@ -1,21 +1,29 @@
 const BookDataMain = require('../../../domain/entities/BookDataMain');
-/**
- * @module listByStateUserBook
- * @description Modulo para listar libros de un usuario por estado
- * @param {Array} userBooks - Array de libros del usuario
- * @param {string} baseUrl - URL base del proyecto
- * @returns {Object} - Objeto con los libros agrupados por estado
+
+/** * Lists user books by their state (to_read, reading, read).
+ * @param {Object} userBookRepository - The repository to interact with user books.
+ * @param {Object} params - The parameters for the function.
+ * @param {string} params.baseUrl - The base URL for constructing cover URLs.
+ * @param {string} params.userId - The ID of the user   
+ * @return {Promise<Object>} A promise that resolves to an object containing arrays of books categorized by their state.
+ * @throws {Error} If there is an error fetching user books or if user books are
+ * not found.
  */
-async function listByStateUserBook(userBooks, baseUrl) {
+async function listByStateUserBook(userBookRepository,{baseUrl,userId}) {
     const booksByState = {
         to_read: [],
         reading: [],
         read: []
     };
 
+    const userBooks = await userBookRepository.findUserBooksWithDetails(userId);
+    if (!userBooks) {
+        throw new Error('Error fetching user books: User books not found');
+    }
+
     userBooks.forEach(book => {
         if (book.state in booksByState) {
-            const coverUrl = (book.book_details.cover_i !== undefined) ? `https://covers.openlibrary.org/b/id/${book.book_details.cover_i}.jpg` : `${baseUrl}/${book.book_details.path_cover}`;    
+            const coverUrl = (book.book_details.cover_i !== undefined) ? `https://covers.openlibrary.org/b/id/${book.book_details.cover_id}.jpg` : `${baseUrl}/${book.book_details.path_cover}`;
             const bookDataMain = new BookDataMain({
                 book_id           : book.book_id,
                 state             : book.state,
