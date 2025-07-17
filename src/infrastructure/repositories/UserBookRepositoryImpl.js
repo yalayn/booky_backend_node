@@ -113,7 +113,8 @@ class UserBookRepositoryImpl extends UserBookRepository{
                             path_cover        : '$bookDetails.path_cover',
                             author            : '$authorDetails.name',
                             editorial         : '$editorialDetails.name',
-                            cover_i           : '$bookDetails.cover_i'
+                            cover_i           : '$bookDetails.cover_i',
+                            cover_url         : '$bookDetails.cover_url'
                         }
                     }
                 }

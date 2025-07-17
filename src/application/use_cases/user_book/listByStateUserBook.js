@@ -56,18 +56,19 @@ async function listByStateUserBook(userBookRepository,{baseUrl,userId}) {
  */
 const getUrlCover = (book_details) => {
     const baseUrl = 'https://covers.openlibrary.org/b/id';
-    if (book_details.cover_i !== undefined) {
-        return `https://covers.openlibrary.org/b/id/${book_details.cover_i}.jpg`;
-
-    } else if (book_details.cover_url !== undefined) { 
+    if (book_details && book_details.cover_url !== undefined){
         return book_details.cover_url;
-
-    } else if (book_details.path_cover !== undefined) {
-        return `${baseUrl}/${book_details.path_cover}`;
-
-    } else {
-        return `${baseUrl}/uploads/covers/default_cover.jpg`; // Default cover if none is available
     }
+    
+    if (book_details && book_details.cover_i !== undefined) {
+        return `https://covers.openlibrary.org/b/id/${book_details.cover_i}.jpg`;
+    }
+    
+    if (book_details && book_details.path_cover !== undefined) {
+        return `${baseUrl}/${book_details.path_cover}`;
+    }
+
+    return `${baseUrl}/uploads/covers/default_cover.jpg`; // Default cover if none is available
 }
 
 module.exports = listByStateUserBook;
