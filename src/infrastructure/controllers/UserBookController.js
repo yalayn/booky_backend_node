@@ -21,7 +21,7 @@ router.post('/add', authMiddleware, async (req, res) => {
     const editorialRepository = new EditorialRepositoryImpl();
     const bookRepository      = new BookRepositoryImpl();
 
-    const { title, genre, publication_year, isbn, descriptions_short, descriptions_long, cover_i, editorial, author } = req.body;
+    const { title, genre, publication_year, isbn, descriptions_short, descriptions_long, cover_url, editorial, author } = req.body;
     try {
         const user = await userRepository.findById(req.user.id);
         
@@ -29,11 +29,11 @@ router.post('/add', authMiddleware, async (req, res) => {
             return res.status(404).json({ error: 'User not found' });
         }
 
-        if (!title || !genre || !publication_year || !isbn || !descriptions_short || !descriptions_long || !cover_i || !editorial || !author) {
+        if (!title || !genre || !publication_year || !isbn || !descriptions_short || !descriptions_long || !cover_url || !editorial || !author) {
             return res.status(400).json({ error: 'All fields are required..' });
         }
 
-        const bookData = { title, genre, publication_year, isbn, descriptions_short, descriptions_long, cover_i, editorial,author }
+        const bookData = { title, genre, publication_year, isbn, descriptions_short, descriptions_long, cover_url, editorial, author }
         const userId   = user.id;
         const userBook = await registerUserBookIfNotExists(userBookRepository, authorRepository, editorialRepository, bookRepository, {userId, bookData});
 

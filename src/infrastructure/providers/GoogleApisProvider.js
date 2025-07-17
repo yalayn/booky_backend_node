@@ -34,29 +34,38 @@ class GoogleApisProvider extends BookSearchProvider {
         };
         try {
             const response = await axios.get(this.baseUrl, { params });
-            const books = response.data.items.map(book => new BookDataSearch({
-                key               : book.id,
-                title             : book.volumeInfo.title,
-                genre             : book.volumeInfo.categories || ['Desconocido'],
-                publication_year  : book.volumeInfo.publishedDate || 'Desconocido',
-                isbn              : book.volumeInfo.industryIdentifiers?.find(id => id.type === 'ISBN_13')?.identifier || generateUniqueISBN(),
-                descriptions_short: book.searchInfo?.textSnippet || 'No se encuentra la descripción.',
-                descriptions_long : book.volumeInfo.description || 'No se encuentra la descripción.',
-                cover_i          : null,
-                cover_url         : book.volumeInfo.imageLinks?.thumbnail?.replace(/^http:/, 'https:') || null,
-                editorial         : {
-                    name         : book.volumeInfo.publisher || 'Desconocida',
-                    country      : 'Desconocido',
-                    founding_date: '1990-01-01',
-                    key          : generateRandomKey()
-                },
-                author: {
-                    "name"    : Array.isArray(book.volumeInfo.authors) ? book.volumeInfo.authors[0] : 'Desconocido',
-                    "country" : 'Desconocido',
-                    "birthday": '1990-01-01',
-                    key       : book.author_key || generateRandomKey(),
+            const books = response.data.items.map(book => {
+                // Extraer solo el año de publishedDate si existe
+                let publicationYear = null;
+                if (book.volumeInfo.publishedDate) {
+                    const match = book.volumeInfo.publishedDate.match(/^(\d{4})/);
+                    publicationYear = match ? match[1] : book.volumeInfo.publishedDate;
                 }
-            }));
+                const cover_url = book.volumeInfo.imageLinks?.thumbnail?.replace(/^http:/, 'https:') || null;
+                return new BookDataSearch({
+                    key               : book.id,
+                    title             : book.volumeInfo.title,
+                    genre             : book.volumeInfo.categories || ['Desconocido'],
+                    publication_year  : publicationYear,
+                    isbn              : book.volumeInfo.industryIdentifiers?.find(id => id.type === 'ISBN_13')?.identifier || generateUniqueISBN(),
+                    descriptions_short: book.searchInfo?.textSnippet || 'No se encuentra la descripción.',
+                    descriptions_long : book.volumeInfo.description || 'No se encuentra la descripción.',
+                    cover_i           : '',
+                    cover_url         : cover_url,
+                    editorial         : {
+                        name         : book.volumeInfo.publisher || 'Desconocida',
+                        country      : 'Desconocido',
+                        founding_date: '1990-01-01',
+                        key          : generateRandomKey()
+                    },
+                    author: {
+                        "name"    : Array.isArray(book.volumeInfo.authors) ? book.volumeInfo.authors[0] : 'Desconocido',
+                        "country" : 'Desconocido',
+                        "birthday": '1990-01-01',
+                        key       : book.author_key || generateRandomKey(),
+                    }
+                });
+            });
             return books;
         } catch (error) {
             console.error('Error fetching books from Google Books API:', error);

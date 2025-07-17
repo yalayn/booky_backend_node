@@ -43,6 +43,7 @@ async function registerUserBookIfNotExists(userBookRepository, authorRepository,
             descriptions_long : bookData.descriptions_long,
             path_cover        : path_cover,
             cover_i           : bookData.cover_i,
+            cover_url         : bookData.cover_url,     
         };
         book = await bookRepository.upsert(bookUpsert);
     }

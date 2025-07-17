@@ -52,6 +52,10 @@ const BookSchema = new mongoose.Schema({
         type: String,
         required: false
     },
+    cover_url: {
+        type: String,
+        required: false
+    },
     created_at: {
       type: Date,
       default: Date.now

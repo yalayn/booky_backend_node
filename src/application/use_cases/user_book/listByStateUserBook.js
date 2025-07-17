@@ -23,7 +23,9 @@ async function listByStateUserBook(userBookRepository,{baseUrl,userId}) {
 
     userBooks.forEach(book => {
         if (book.state in booksByState) {
-            const coverUrl = (book.book_details.cover_i !== undefined) ? `https://covers.openlibrary.org/b/id/${book.book_details.cover_id}.jpg` : `${baseUrl}/${book.book_details.path_cover}`;
+
+            const coverUrl = getUrlCover(book.book_details);
+            // const coverUrl = (book.book_details.cover_i !== undefined) ? `https://covers.openlibrary.org/b/id/${book.book_details.cover_i}.jpg` : `${baseUrl}/${book.book_details.path_cover}`;
             const bookDataMain = new BookDataMain({
                 book_id           : book.book_id,
                 state             : book.state,
@@ -46,4 +48,26 @@ async function listByStateUserBook(userBookRepository,{baseUrl,userId}) {
 
     return booksByState;
 }
+
+/**
+ * 
+ * @param {*} book 
+ * @returns 
+ */
+const getUrlCover = (book_details) => {
+    const baseUrl = 'https://covers.openlibrary.org/b/id';
+    if (book_details.cover_i !== undefined) {
+        return `https://covers.openlibrary.org/b/id/${book_details.cover_i}.jpg`;
+
+    } else if (book_details.cover_url !== undefined) { 
+        return book_details.cover_url;
+
+    } else if (book_details.path_cover !== undefined) {
+        return `${baseUrl}/${book_details.path_cover}`;
+
+    } else {
+        return `${baseUrl}/uploads/covers/default_cover.jpg`; // Default cover if none is available
+    }
+}
+
 module.exports = listByStateUserBook;
