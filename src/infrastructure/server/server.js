@@ -1,19 +1,21 @@
 // src/infrastructure/server/server.js
 
-const express             = require('express');
-const cors                = require('cors');
-const bodyParser          = require('body-parser');
-const dotenv              = require('dotenv');
-const userController      = require('../controllers/UserController');
-const bookController      = require('../controllers/BookController');
-const authorController    = require('../controllers/AuthorController');
-const editorialController = require('../controllers/EditorialController');
-const connectDB           = require('../database/database');
-const userBookController  = require('../controllers/UserBookController');
-const searchBookController = require('../controllers/SearchBookController');
-const readingSessionsController = require('../controllers/ReadingSessionsController');
-const path = require('path');
+const express    = require('express');
+const cors       = require('cors');
+const bodyParser = require('body-parser');
+const dotenv     = require('dotenv');
+const connectDB  = require('../database/database');
 
+const userController            = require('../controllers/UserController');
+const bookController            = require('../controllers/BookController');
+const authorController          = require('../controllers/AuthorController');
+const editorialController       = require('../controllers/EditorialController');
+const userBookController        = require('../controllers/UserBookController');
+const searchBookController      = require('../controllers/SearchBookController');
+const readingSessionsController = require('../controllers/ReadingSessionsController');
+const reviewBookController      = require('../controllers/ReviewBookController');
+
+const path = require('path');
 const PATH_UPLOADS = path.join(__dirname, '../../../uploads');
 
 dotenv.config();
@@ -29,7 +31,7 @@ app.use(cors({ origin: 'http://localhost:3000' }));
 
 app.use(bodyParser.json());
 
-// Descarga de archivos
+// DESCARGA DE ARCHIVOS ESTATICOS
 app.use('/uploads', express.static(PATH_UPLOADS));
 
 //RUTA DE API BOOK
@@ -47,10 +49,14 @@ app.use('/api/editorial', editorialController);
 //RUTA DE API USERBOOK
 app.use('/api/userbook', userBookController);
 
-// Buscar informacion de libros.
+// RUTA API PARA BUSQUEDA DE LIBROS
 app.use('/api/search', searchBookController);
 
+// RUTA API PARA REGISTRO DE SESIONES DE LECTURA
 app.use('/api/reading-sessions',readingSessionsController);
+
+// RUTA API PARA REGISTRO DE REVIEWS
+app.use('/api/review', reviewBookController);
 
 app.listen(port, () => {
   console.log(`Servidor escuchando en http://localhost:${port}`);
