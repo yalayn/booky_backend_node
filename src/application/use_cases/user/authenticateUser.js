@@ -14,11 +14,11 @@ const authenticateUser = async (userRepository, { username, password }) => {
     throw new InvalidPasswordError('Invalid password');
   }
 
-  const payload = { id: user.id, username: user.username };
+  const payload = { _id: user._id, username: user.username, name: user.name };
   const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION_TIME });
   const refreshToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION_TIME_REFRESH_TOKEN }); // Refresh token valid for 7 days
 
-  return { token: token, refresh_token: refreshToken, user: { id: user.id, username: user.username, name: user.name } };
+  return { token: token, refresh_token: refreshToken, user: payload };
 };
 
 module.exports = { authenticateUser };
