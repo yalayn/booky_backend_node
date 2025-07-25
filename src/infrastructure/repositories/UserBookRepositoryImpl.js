@@ -1,5 +1,7 @@
+const mongoose           = require('mongoose');
 const UserModel          = require('../database/models/UserModel');
 const ReviewModel        = require('../database/models/ReviewModel');
+const UserBookModel      = require('../database/models/UserBookModel');
 const UserBookRepository = require('../../domain/repositories/UserBookRepository');
 const UserBook           = require('../../domain/entities/UserBook');
 
@@ -28,81 +30,71 @@ class UserBookRepositoryImpl extends UserBookRepository{
 
     async findUserBooksWithDetails(userId) {
         try {
-            const userBooks = await UserModel.aggregate([
-                {
-                    $match: { id: userId } // Filtrar por el usuario específico
-                },
-                {
-                    $unwind: '$books' // Descomponer el arreglo de libros
-                },
+            userId = new mongoose.Types.ObjectId(userId);
+            const userBooks = await UserBookModel.aggregate([
+                { $match: { user_id: userId } },
                 {
                     $lookup: {
-                        from        : 'books', // Nombre de la colección de libros
-                        localField  : 'books.book_id', // Campo en la colección de usuarios
-                        foreignField: '_id', // Campo en la colección de libros
-                        as          : 'bookDetails' // Nombre del campo donde se almacenarán los detalles del libro
+                        from        : 'books',
+                        localField  : 'book_id',
+                        foreignField: '_id',
+                        as          : 'bookDetails'
                     }
                 },
-                {
-                    $unwind: '$bookDetails' // Descomponer el arreglo de detalles del libro
-                },
+                { $unwind: '$bookDetails' },
                 {
                     $lookup: {
-                        from: 'authors', // Nombre de la colección de autores
-                        localField: 'bookDetails.author_id', // Campo en la colección de libros
-                        foreignField: '_id', // Campo en la colección de autores
-                        as: 'authorDetails' // Nombre del campo donde se almacenarán los detalles del autor
+                        from        : 'authors',
+                        localField  : 'bookDetails.author_id',
+                        foreignField: '_id',
+                        as          : 'authorDetails'
                     }
                 },
-                {
-                    $unwind: '$authorDetails' // Descomponer el arreglo de detalles del autor
-                },
+                { $unwind: '$authorDetails' },
                 {
                     $lookup: {
-                        from: 'editorials', // Nombre de la colección de editoriales
-                        localField: 'bookDetails.editorial_id', // Campo en la colección de libros
-                        foreignField: '_id', // Campo en la colección de editoriales
-                        as: 'editorialDetails' // Nombre del campo donde se almacenarán los detalles de la editorial
+                        from        : 'editorials',
+                        localField  : 'bookDetails.editorial_id',
+                        foreignField: '_id',
+                        as          : 'editorialDetails'
                     }
                 },
-                {
-                    $unwind: '$editorialDetails' // Descomponer el arreglo de detalles de la editorial
-                },
+                { $unwind: '$editorialDetails' },
                 {
                     $lookup: {
-                        from: 'reviews', // Nombre de la colección de reviews
-                        let: { bookId: '$books.book_id', userId: '$_id' }, // Variables locales para usar en el pipeline
+                        from: 'reviews',
+                        let: { bookId: '$book_id', userId: '$user_id' },
                         pipeline: [
                             {
                                 $match: {
                                     $expr: {
                                         $and: [
-                                            { $eq: ['$book_id', '$$bookId'] }, // Coincidir con el book_id
-                                            { $eq: ['$user_id', '$$userId'] }  // Coincidir con el user_id
+                                            { $eq: ['$book_id', '$$bookId'] },
+                                            { $eq: ['$user_id', '$$userId'] }
                                         ]
                                     }
                                 }
                             }
                         ],
-                        as: 'reviews' // Nombre del campo donde se almacenarán los reviews
+                        as: 'reviewDetails'
                     }
                 },
                 {
                     $unwind: {
-                        path: '$reviews', // Descomponer el arreglo de reviews
-                        preserveNullAndEmptyArrays: true // Permitir que los libros sin reviews no sean eliminados
+                        path: '$reviewDetails',
+                        preserveNullAndEmptyArrays: true
                     }
                 },
                 {
                     $project: {
-                        _id: 0, // Excluir el _id del usuario
-                        book_id     : '$books.book_id',
-                        state       : '$books.state',
-                        year_read   : '$books.year_read',
+                        _id: 0,
+                        book_id     : '$book_id',
+                        state       : '$state',
+                        year_read   : '$year_read',
                         rating      : '$reviews.rating',
                         review      : '$reviews.review',
-                        registeredAt: '$books.registeredAt',
-                        updatedAt   : '$books.updatedAt',
+                        registeredAt: '$registeredAt',
+                        updatedAt   : '$updatedAt',
                         book_details: {
                             title             : '$bookDetails.title',
                             genre             : '$bookDetails.genre',
@@ -126,89 +118,21 @@ class UserBookRepositoryImpl extends UserBookRepository{
         }
     }
 
-    async add(userId, bookId) {
-        try {
-            // Agregar el libro al arreglo books
-            const result = await UserModel.updateOne(
-                { id: userId },
-                { $push: { books: { book_id: bookId } } }
-            );
-
-            if (result.modifiedCount === 0) {
-                throw new Error('Book not added');
-            }
-
-            return { success: true, message: 'Book added successfully' };
-        } catch (error) {
-            throw new Error('Error adding user book: ' + error.message);
-        }
+    async save(userBook) {
+        const newUserBook = new UserBookModel(userBook);
+        await newUserBook.save();
+        return newUserBook;
     }
 
     async remove(userId, bookId) {
-        try {
-            const result = await UserModel.updateOne(
-                { id: userId },
-                { $pull: { books: { book_id: bookId } } }
-            );
-            if (result.modifiedCount === 0) {
-                throw new Error('Book not found or not removed');
-            }
-            return { success: true, message: 'Book removed successfully' };
-        } catch (error) {
-            throw new Error('Error removing user book: ' + error.message);
-        }
+        return await UserBookModel.findOneAndDelete({ user_id: userId, book_id: bookId });
     }
 
     async updateState(userId, bookId, newState) {
-        try {
-            
-            const result = await UserModel.updateOne(
-                { id: userId, 'books.book_id': bookId }, // Buscar el usuario y el libro específico
-                { $set: { 'books.$.state': newState } } // Actualizar el campo state del libro encontrado
-            );
-
-            if (result.modifiedCount === 0) {
-                throw new Error('Book state not updated. Either the user or book was not found.');
-            }
-
-            return { success: true, message: 'Book state updated successfully' };
-        } catch (error) {
-            throw new Error('Error updating book state: ' + error.message);
-        }
-    }
-
-    async registreReview(userId, bookId, reviewText, rating) {
-        try {
-            const review = await ReviewModel.findOne({ user_id: userId, book_id: bookId });
-            if (review) {
-                review.review = reviewText;
-                review.rating = rating;
-                await review.save();
-                return { success: true, message: 'Review update successfully' };
-            } else {
-                const newReview = new ReviewModel({
-                    user_id: userId,
-                    book_id: bookId,
-                    review : reviewText,
-                    rating : rating
-                });
-                await newReview.save();
-                return { success: true, message: 'Review add successfully' };
-            }
-        } catch (error) {
-            throw new Error('Error adding review: ' + error.message);
-        }
-    }
-
-    async getBookReviews(bookId) {
-        try {
-            const reviews = await ReviewModel.find({ book_id: bookId })
-                .populate('user_id', 'name username') // Populate user details
-                .select('rating review created_at');
-            return reviews;
-        } catch (error) {
-            throw new Error('Error fetching book reviews: ' + error.message);
-        }
+        return await UserBookModel.findOneAndUpdate(
+            { user_id: userId, book_id: bookId },
+            { state: newState, updatedAt: new Date() }
+        );
     }
 }
 

@@ -17,15 +17,14 @@ async function listByStateUserBook(userBookRepository,{baseUrl,userId}) {
     };
 
     const userBooks = await userBookRepository.findUserBooksWithDetails(userId);
+    console.log('userBooks', userBooks);
     if (!userBooks) {
         throw new Error('Error fetching user books: User books not found');
     }
 
     userBooks.forEach(book => {
         if (book.state in booksByState) {
-
             const coverUrl = getUrlCover(book.book_details);
-            // const coverUrl = (book.book_details.cover_i !== undefined) ? `https://covers.openlibrary.org/b/id/${book.book_details.cover_i}.jpg` : `${baseUrl}/${book.book_details.path_cover}`;
             const bookDataMain = new BookDataMain({
                 book_id           : book.book_id,
                 state             : book.state,

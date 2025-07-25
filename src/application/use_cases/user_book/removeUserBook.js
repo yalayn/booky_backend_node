@@ -14,8 +14,13 @@ async function removeUserBook(userBookRepository, {userId, bookId}) {
     if (!userId || !bookId) {
         throw new Error('User ID and Book ID are required');
     }
+    userId = new mongoose.Types.ObjectId(userId);
     bookId = new mongoose.Types.ObjectId(bookId);
-    return await userBookRepository.remove(userId, bookId);
+    const userBook = await userBookRepository.remove(userId, bookId);
+    if (!userBook) {
+        throw new Error('User book not found or could not be removed');
+    }
+    return userBook;
 }
 
 module.exports = removeUserBook;
