@@ -31,7 +31,6 @@ class OpenLibraryProvider extends BookSearchProvider {
       isbn              : book.isbn?.[0] || generateUniqueISBN(),
       descriptions_short: 'No se encuentra la descripción.',
       descriptions_long : 'No se encuentra la descripción.',
-      cover_i           : book.cover_i || null,
       cover_url         : book.cover_i ? `https://covers.openlibrary.org/b/id/${book.cover_i}.jpg`: null,
       editorial         : {
         name         : book.publisher?.[0] || 'Desconocida',

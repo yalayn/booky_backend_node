@@ -50,7 +50,6 @@ class GoogleApisProvider extends BookSearchProvider {
                     isbn              : book.volumeInfo.industryIdentifiers?.find(id => id.type === 'ISBN_13')?.identifier || generateUniqueISBN(),
                     descriptions_short: book.searchInfo?.textSnippet || 'No se encuentra la descripción.',
                     descriptions_long : book.volumeInfo.description || 'No se encuentra la descripción.',
-                    cover_i           : '',
                     cover_url         : cover_url,
                     editorial         : {
                         name         : book.volumeInfo.publisher || 'Desconocida',
