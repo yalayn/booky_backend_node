@@ -11,7 +11,7 @@ class BookRepositoryImpl extends BookRepository {
   async save(book) {
     const newBook = new BookModel(book);
     await newBook.save();
-    return new Book(newBook._id,newBook.title,newBook.author_id,newBook.editorial_id,newBook.genre,newBook.publication_year,newBook.isbn);
+    return new Book(newBook._id,newBook.title,newBook.author_id,newBook.editorial_id,newBook.genre,newBook.publication_year,newBook.isbn,newBook.cover_url);
   }
 
   async upsert(book) {
@@ -27,7 +27,7 @@ class BookRepositoryImpl extends BookRepository {
   async findById(id) {
     const Book = await BookModel.findOne({id});
     if (Book) {
-      return new Book(Book._id,Book.title,newBook.author_id,Book.editorial_id,Book.genre,Book.publication_year,Book.isbn);
+      return new Book(Book._id,Book.title,newBook.author_id,Book.editorial_id,Book.genre,Book.publication_year,Book.isbn, Book.cover_url);
     }
     return null;
   }

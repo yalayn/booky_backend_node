@@ -48,10 +48,6 @@ const BookSchema = new mongoose.Schema({
         type: String,
         required: false
     },
-    cover_i: {
-        type: String,
-        required: false
-    },
     cover_url: {
         type: String,
         required: false
