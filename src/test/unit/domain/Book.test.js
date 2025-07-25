@@ -10,7 +10,7 @@ describe('Book Entity', () => {
       'Novel',
       1925,
       '978-3-16-148410-0',
-      12345
+      'https://covers.test.com/test.jpg'
     );
 
     expect(book._id).toBe('1');
@@ -20,7 +20,7 @@ describe('Book Entity', () => {
     expect(book.genre).toBe('Novel');
     expect(book.publication_year).toBe(1925);
     expect(book.isbn).toBe('978-3-16-148410-0');
-    expect(book.cover_i).toBe(12345);
+    expect(book.cover_url).toBe('https://covers.test.com/test.jpg');
   });
 
   it('should allow undefined or null values for optional fields', () => {
@@ -32,7 +32,7 @@ describe('Book Entity', () => {
       undefined,
       1949,
       null,
-      undefined
+      null
     );
 
     expect(book._id).toBe('2');
@@ -42,11 +42,11 @@ describe('Book Entity', () => {
     expect(book.genre).toBeUndefined();
     expect(book.publication_year).toBe(1949);
     expect(book.isbn).toBeNull();
-    expect(book.cover_i).toBeUndefined();
+    expect(book.cover_url).toBeNull();
   });
 
   it('should assign values in the correct order', () => {
-    const values = ['id', 'title', 'aid', 'eid', 'genre', 2000, 'isbn', 42];
+    const values = ['id', 'title', 'aid', 'eid', 'genre', 2000, 'isbn', 'https://covers.test.com/test.jpg'];
     const book = new Book(...values);
 
     expect(book._id).toBe('id');
@@ -56,6 +56,6 @@ describe('Book Entity', () => {
     expect(book.genre).toBe('genre');
     expect(book.publication_year).toBe(2000);
     expect(book.isbn).toBe('isbn');
-    expect(book.cover_i).toBe(42);
+    expect(book.cover_url).toBe('https://covers.test.com/test.jpg');
   });
 });

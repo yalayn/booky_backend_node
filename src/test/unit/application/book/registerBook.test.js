@@ -21,7 +21,7 @@ describe('registerBook use case', () => {
             descriptions_short: 'Short desc',
             descriptions_long: 'Long desc',
             path_cover: '/covers/test.jpg',
-            cover_i: 42
+            cover_url: 'https://covers.test.com/test.jpg'
         };
 
         const result = await registerBook(bookRepository, input);
@@ -37,7 +37,7 @@ describe('registerBook use case', () => {
             descriptions_short: input.descriptions_short,
             descriptions_long: input.descriptions_long,
             path_cover: input.path_cover,
-            cover_i: input.cover_i
+            cover_url: input.cover_url
         });
 
         expect(savedBook._id).toBeInstanceOf(mongoose.Types.ObjectId);
@@ -58,7 +58,7 @@ describe('registerBook use case', () => {
             descriptions_short: 'Short desc',
             descriptions_long: 'Long desc',
             path_cover: '/covers/test.jpg',
-            cover_i: 42
+            cover_url: 'https://covers.test.com/test.jpg'
         };
 
         await expect(registerBook(bookRepository, input)).rejects.toThrow('DB error');
