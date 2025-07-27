@@ -6,7 +6,7 @@ const { UserNotFoundError, InvalidPasswordError } = require('../../errors');
 const authenticateUser = async (userRepository, { username, password }) => {
   const user = await userRepository.findByUsername(username);
   if (!user) {
-    throw new UserNotFoundError('User not found');
+    throw new UserNotFoundError('User not found in authenticateUser');
   }
 
   const isMatch = await user.comparePassword(password);
