@@ -1,6 +1,10 @@
 const { mongoose, model, Schema, Types } = require('mongoose');
 
 const ReviewSchema = new Schema({
+  _id: {
+    type: Types.ObjectId,
+    auto: true
+  },
   user_id: {
     type: Types.ObjectId,
     required: true,
