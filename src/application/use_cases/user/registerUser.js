@@ -2,17 +2,21 @@
 
 const registerUser = async (userRepository, { name, username, password}) => {
   // Lógica del caso de uso
-  let id   = UniqueValue();
-  const user = { id, name, username, password };
-  return await userRepository.save(user);
-};
+  if (!name || !username || !password) {
+    throw new Error('All fields are required');
+  }
 
-const UniqueValue = function() {
-  let currentDate   = new Date().getTime();
-  let randomValue   = Math.floor(Math.random() * 100000);
-  let combinedValue = currentDate.toString() + randomValue.toString();
-  let uniqueValue   = combinedValue.slice(-5);
-  return uniqueValue;
-}
+  const isUser = await userRepository.findByUsername(username);
+  if (isUser) {
+    throw new Error('Username already exists');
+  }
+  
+  const user   = { name, username, password };
+  const result = await userRepository.save(user);
+  if (!result) {
+    throw new Error('Error registering user');
+  }
+  return result;
+};
 
 module.exports = { registerUser };

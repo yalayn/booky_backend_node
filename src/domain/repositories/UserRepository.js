@@ -12,6 +12,10 @@ class UserRepository {
     async findByUsername(username) {
       throw new Error('Not implemented');
     }
+
+    async findBy_Id(id) {
+      throw new Error('Not implemented');
+    }
   }
   
   module.exports = UserRepository;

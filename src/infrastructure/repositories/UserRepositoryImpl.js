@@ -12,13 +12,13 @@ class UserRepositoryImpl extends UserRepository {
   async save(user) {
     const newUser = new UserModel(user);
     await newUser.save();
-    return new User(newUser._id, newUser.id, newUser.name, newUser.username, newUser.password);
+    return newUser;
   }
 
   async findById(id) {
     const user = await UserModel.findOne({id});
     if (user) {
-      return new User(user._id, user.id, user.name, user.username, user.password);
+      return new User(user._id, user.name, user.username, user.password);
     }
     return null;
   }
@@ -31,6 +31,14 @@ class UserRepositoryImpl extends UserRepository {
     }
     return null;
   }
+
+  async findBy_Id(id) {
+    const user = await UserModel.findById(id);
+    if (user) {
+      return new User(user._id, user.name, user.username, user.password);
+    }
+    return null;
+  }    
 
 }
 

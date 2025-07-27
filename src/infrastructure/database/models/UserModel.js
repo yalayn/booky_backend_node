@@ -4,9 +4,9 @@ const {mongoose, model, Types} = require('mongoose');
 const bcrypt    = require('bcrypt');
 
 const UserSchema = new mongoose.Schema({
-  id: {
-    type: Number,
-    required: true,
+  _id: {
+    type: Types.ObjectId,
+    auto: true
   },
   name: {
     type: String,
