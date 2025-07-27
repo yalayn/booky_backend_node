@@ -162,12 +162,8 @@ router.get('/user/:userId/date-range', authMiddleware, async (req, res) => {
 });
 
 const getUserId = async (req) => {
-    const userRepository = new UserRepositoryImpl();
-    const user = await userRepository.findById(req.user.id);
-    if (!user) {
-        throw new Error('User not found');
-    }
-    return user._id;
+    const id = req.user._id;
+    return id;
 }
 
 module.exports = router;
