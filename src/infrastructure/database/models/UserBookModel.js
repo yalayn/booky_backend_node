@@ -2,6 +2,10 @@ const { mongoose, model, Types } = require('mongoose');
 const BOOK_STATES = require('../../../domain/constants/BookStates');
 
 const UserBookSchema = new mongoose.Schema({
+  _id: {
+    type: Types.ObjectId,
+    auto: true
+  },
   user_id: {
     type: Types.ObjectId,
     required: true,
