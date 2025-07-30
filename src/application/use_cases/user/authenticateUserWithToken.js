@@ -15,8 +15,6 @@ const authenticateUserWithToken = async (userRepository, { refreshToken }) => {
     const payload = { _id: user._id, username: user.username, name: user.name };
     const newToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION_TIME });
 
-    console.log(`New token generated for user ${user.username}: ${newToken}`);
-
     return newToken;
 };
 

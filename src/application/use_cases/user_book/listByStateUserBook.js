@@ -17,7 +17,6 @@ async function listByStateUserBook(userBookRepository,{baseUrl,userId}) {
     };
 
     const userBooks = await userBookRepository.findUserBooksWithDetails(userId);
-    console.log('userBooks', userBooks);
     if (!userBooks) {
         throw new Error('Error fetching user books: User books not found');
     }

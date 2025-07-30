@@ -20,7 +20,7 @@ router.post('/register', async (req, res) => {
     const user = await registerUser(userRepository, { name, username, password });
     res.status(201).json(user);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -52,7 +52,7 @@ router.get('/', authMiddleware, async (req, res) => {
       res.status(404).json({ error: `${username} User not found` });
     }
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -105,8 +105,6 @@ router.post('/refresh-token', async (req, res) => {
     response["message"] = 'Failed to refresh token';
     return res.status(500).json(response);
   }
-
-  console.log(`New token generated: ${newToken}`);
 
   response["success"] = true;
   response["data"] = { token: newToken };
