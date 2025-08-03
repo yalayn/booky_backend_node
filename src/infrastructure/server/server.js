@@ -58,6 +58,9 @@ app.use('/api/reading-sessions',readingSessionsController);
 // RUTA API PARA REGISTRO DE REVIEWS
 app.use('/api/review', reviewBookController);
 
+// RUTA API PARA EL REGISTRO DE METAS DE USUARIO
+app.use('/api/usergoal', require('../controllers/UserGoalController'));
+
 app.listen(port, () => {
   console.log(`Servidor escuchando en http://localhost:${port}`);
 });
