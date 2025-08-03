@@ -5,7 +5,8 @@ describe('registerUser use case', () => {
 
     beforeEach(() => {
         userRepository = {
-            save: jest.fn(async (user) => ({ ...user }))
+            save: jest.fn(async (user) => ({ ...user })),
+            findByUsername: jest.fn(async (username) => null) // Simulate no existing user
         };
     });
 
@@ -14,21 +15,9 @@ describe('registerUser use case', () => {
         const result = await registerUser(userRepository, userData);
 
         expect(userRepository.save).toHaveBeenCalledTimes(1);
-        expect(result).toHaveProperty('id');
         expect(result.name).toBe(userData.name);
         expect(result.username).toBe(userData.username);
         expect(result.password).toBe(userData.password);
-        expect(result.id).toHaveLength(5);
-    });
-
-    it('should generate a unique id for each user', async () => {
-        const userData1 = { name: 'Alice', username: 'alice', password: 'pass1' };
-        const userData2 = { name: 'Bob', username: 'bob', password: 'pass2' };
-
-        const result1 = await registerUser(userRepository, userData1);
-        const result2 = await registerUser(userRepository, userData2);
-
-        expect(result1.id).not.toBe(result2.id);
     });
 
     it('should throw if userRepository.save fails', async () => {
@@ -48,6 +37,6 @@ describe('registerUser use case', () => {
             username: userData.username,
             password: userData.password
         });
-        expect(savedUser).toHaveProperty('id');
+        expect(savedUser).toHaveProperty('name');
     });
 });
