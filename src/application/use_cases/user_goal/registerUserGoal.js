@@ -10,8 +10,11 @@ const registerUserGoal = async (userGoalRepository, userId, goal) => {
     if (!type || !targetValue) {
         throw new Error('Goal type and target value are required');
     }
-
+    
     const userGoal = new UserGoal({ userId, type, targetValue, startDate, endDate, status, currentProgress, description });
+    if (!userGoal) {
+        throw new Error('Error creating UserGoal entity');
+    }
     return await userGoalRepository.save(userGoal);
 }
 

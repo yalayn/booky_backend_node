@@ -1,6 +1,6 @@
 const { mongoose, model, Types } = require('mongoose');
 
-const GOAL_TYPES  = ['daily_minutes', 'daily_pages', 'streak_days', 'total_books', 'custom'];
+const GOAL_TYPES  = ['daily_time', 'daily_pages', 'streak_days', 'total_books', 'custom'];
 const GOAL_STATUS = ['active', 'completed', 'expired', 'paused'];
 
 const UserGoalSchema = new mongoose.Schema({

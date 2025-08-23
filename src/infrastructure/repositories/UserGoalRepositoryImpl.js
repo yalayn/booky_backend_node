@@ -7,9 +7,19 @@ class UserGoalRepositoryImpl extends UserGoalRepository {
     }
 
     async save(userGoal) {
-        const newUserGoal = new UserGoalModel(userGoal);
-        await newUserGoal.save();
-        return newUserGoal;
+        let goal = await UserGoalModel.findOne({ user_id: userGoal.user_id, type: userGoal.type });
+        if (goal) {
+            goal.target_value     = userGoal.target_value;
+            goal.start_date       = userGoal.start_date;
+            goal.end_date         = userGoal.end_date;
+            goal.status           = userGoal.status;
+            goal.current_progress = userGoal.current_progress;
+            goal.last_updated     = new Date();
+            goal.description      = userGoal.description;
+        } else {
+            goal = new UserGoalModel(userGoal);
+        }
+        return await goal.save();
     }
 
     async findByUserIdAndType(userId, type) {
