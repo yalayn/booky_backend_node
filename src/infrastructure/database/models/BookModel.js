@@ -36,13 +36,11 @@ const BookSchema = new mongoose.Schema({
     },
     descriptions_short: {
         type: String,
-        required: false,
-        maxlength: 500
+        required: false
     },
     descriptions_long: {
         type: String,
-        required: false,
-        maxlength: 2000
+        required: false
     },
     path_cover: {
         type: String,
