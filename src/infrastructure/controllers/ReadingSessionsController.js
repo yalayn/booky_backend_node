@@ -1,13 +1,12 @@
 const express = require('express');
 const router  = express.Router();
 const ReadingSessionsRepositoryImpl = require('../repositories/ReadingSessionsRepositoryImpl');
-const registerReadingSession = require('../../application/use_cases/reading_session/registerReadingSession');
-const updateReadingSession = require('../../application/use_cases/reading_session/updateReadingSession');
-const UserRepositoryImpl = require('../repositories/UserRepositoryImpl');
-const authMiddleware = require('../middleware/auth');
-const listReadingSessionsByUser = require('../../application/use_cases/reading_session/listReadingSessionsByUser');
+const registerReadingSession        = require('../../application/use_cases/reading_session/registerReadingSession');
+const updateReadingSession          = require('../../application/use_cases/reading_session/updateReadingSession');
+const authMiddleware                = require('../middleware/auth');
+const listReadingSessionsByUser     = require('../../application/use_cases/reading_session/listReadingSessionsByUser');
 const listReadingSessionsByUserBook = require('../../application/use_cases/reading_session/listReadingSessionsByUserBook');
-const countReadingSessionsByUser = require('../../application/use_cases/reading_session/countReadingSessionsByUser');
+const countReadingSessionsByUser    = require('../../application/use_cases/reading_session/countReadingSessionsByUser');
 const mongoose = require('mongoose');
 const now = new Date();
 
@@ -21,9 +20,9 @@ router.post('/register', authMiddleware, async (req, res) => {
         }
         date = date ? new Date(date) : new Date(now.getFullYear(), now.getMonth(), now.getDate());
         const readingSession = await registerReadingSession(readingSessionsRepository, { user_id:userId, book_id, seconds, date, last_page_read });
-        res.status(201).json(readingSession);
+        res.status(201).json({ success:true, data:readingSession, message: 'Reading session registered successfully'});
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        res.status(400).json({ success:false, data:[], message: error.message });
     }
 }
 );
@@ -34,11 +33,10 @@ router.put('/update', authMiddleware, async (req, res) => {
     try {
         const userId = await getUserId(req);
         const readingSession =  await updateReadingSession(readingSessionsRepository, { id, user_id: userId, book_id, seconds, date, last_page_read });
-        // const readingSession = await readingSessionsRepository.update({ _id: id, userId, book_id: book_id, seconds, date, last_page_read });
         if (!readingSession) {
             return res.status(404).json({ success:false, data:[], message: 'Reading session not found' });
         }
-        res.status(200).json(readingSession);
+        res.status(200).json({ success:true, data:readingSession, message: 'Reading session updated successfully' });
     } catch (error) {
         res.status(400).json({ success:false, data:[], message:error.message });
     }
@@ -51,11 +49,11 @@ router.delete('/delete/:id', authMiddleware, async (req, res) => {
     try {
         const readingSession = await readingSessionsRepository.delete(id);
         if (!readingSession) {
-            return res.status(404).json({ error: 'Reading session not found' });
+            return res.status(404).json({ success:false, data:[], message: 'Reading session not found' });
         }
-        res.status(200).json({ message: 'Reading session deleted successfully' });
+        res.status(200).json({ success:true, message: 'Reading session deleted successfully' });
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        res.status(400).json({ success:false, data:[], message: error.message });
     }
 }
 ); 
@@ -78,7 +76,8 @@ router.get('/find/:id', authMiddleware, async (req, res) => {
 router.get('/history', authMiddleware, async (req, res) => {
     const baseUrl   = `${req.protocol}://${req.get('host')}`;
     const readingSessionsRepository = new ReadingSessionsRepositoryImpl();
-    const userId = await getUserId(req);
+    const userId = req.user._id;
+    console.log(`Fetching reading sessions for user ID: ${userId}`);
     try {
         const listReadingSessions = await readingSessionsRepository.findByUserId(userId);
         if (!listReadingSessions || listReadingSessions.length === 0) {
@@ -130,14 +129,10 @@ router.get('/user_by_book', authMiddleware, async (req, res) => {
 
 router.get('/today', authMiddleware, async (req, res) => {
     const readingSessionsRepository = new ReadingSessionsRepositoryImpl();
-    const userId = await getUserId(req);
-    const date = req.body.date ? new Date(req.body.date) : new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const userId = req.user._id;
+    const date   = req.body.date ? new Date(req.body.date) : new Date(now.getFullYear(), now.getMonth(), now.getDate());
     try {
-        const listReadingSessions = await readingSessionsRepository.findByUserIDate(userId, date);
-        if (!listReadingSessions || listReadingSessions.length === 0) {
-            return res.status(200).json({ success:false, error: 'No reading sessions found for this user',data: [] });
-        }
-        const data = await countReadingSessionsByUser(listReadingSessions);
+        const data = await countReadingSessionsByUser(readingSessionsRepository, userId, date);
         res.status(200).json({"success": true, "data": data, "message": "Reading sessions retrieved successfully"
         });
     } catch (error) {

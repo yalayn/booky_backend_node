@@ -1,6 +1,7 @@
 const ReadingSessionsRepository = require('../../domain/repositories/ReadingSessionsRepository');
 const ReadingSessionModel = require('../../infrastructure/database/models/ReadingSessionsModel');
 const ReadingSession = require('../../domain/entities/ReadingSessions');
+const formatTime = require("../../utils/formatTime");
 
 
 class ReadingSessionsRepositoryImpl extends ReadingSessionsRepository{
@@ -62,7 +63,7 @@ class ReadingSessionsRepositoryImpl extends ReadingSessionsRepository{
     }
 
     async findByUserIDate(userId, dateToSearch) {
-        // const dateToSearch = new Date('2025-05-28');
+        let time = 0;
         const startOfDay = new Date(dateToSearch);
         startOfDay.setUTCHours(0, 0, 0, 0);
         const endOfDay = new Date(dateToSearch);
@@ -70,7 +71,11 @@ class ReadingSessionsRepositoryImpl extends ReadingSessionsRepository{
 
         const sessions = await ReadingSessionModel.find({ user_id: userId, date: { $gte: startOfDay, $lte: endOfDay }});
         if (sessions) {
-            return sessions.map(session => new ReadingSession({_id:session._id, userId:session.user_id, bookId:session.book_id, seconds:session.seconds, date:session.date, lastPageRead:session.last_page_read}));
+            for (const session of sessions) {
+                time = time + session.seconds;
+                console.log('Total seconds read:', time);
+            }
+            return {"hours":formatTime(time), seconds:time};
         }
         return null;
     }
