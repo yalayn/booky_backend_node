@@ -28,8 +28,8 @@ async function listByStateUserBook(userBookRepository,{baseUrl,userId}) {
                 book_id           : book.book_id,
                 state             : book.state,
                 year_read         : book.year_read,
-                rating            : book.rating,
-                review            : book.review,
+                rating            : book.rating || 0,
+                review            : book.review || '',
                 title             : book.book_details.title,
                 genre             : book.book_details.genre,
                 publication_year  : book.book_details.publication_year,
@@ -38,8 +38,9 @@ async function listByStateUserBook(userBookRepository,{baseUrl,userId}) {
                 descriptions_long : book.book_details.descriptions_long,
                 cover_url         : coverUrl,
                 author            : book.book_details.author,
-                editorial         : book.book_details.editorial,
+                editorial         : book.book_details.editorial
             });
+            console.log('BookDataMain:', bookDataMain);
             booksByState[book.state].push(bookDataMain);
         }
     });

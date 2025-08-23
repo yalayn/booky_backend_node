@@ -26,9 +26,9 @@ router.post('/add', authMiddleware, async (req, res) => {
         const userId   = req.user._id;
         const bookData = { title, genre, publication_year, isbn, descriptions_short, descriptions_long, cover_url, editorial, author }
         const userBook = await registerUserBookIfNotExists(userBookRepository, authorRepository, editorialRepository, bookRepository, {userId, bookData});
-        res.status(201).json(userBook);
+        res.status(200).json({success: true, data: userBook, message: 'User book added successfully'});
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      res.status(400).json({ success: false, message: error.message });
     }
 });
 
@@ -52,9 +52,9 @@ router.post('/remove', authMiddleware, async (req, res) => {
     try {
         const userId = req.user._id;
         await removeUserBook(userBookRepository, {userId, bookId: book_id});
-        res.status(200).json({ message: 'User book removed successfully' });
+        res.status(200).json({ success:true, message: 'User book removed successfully' });
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      res.status(400).json({ success:false, message: error.message });
     }
 });
 
@@ -65,9 +65,9 @@ router.put('/update_state', authMiddleware, async (req, res) => {
     try {
         const userId = req.user._id;
         await updateStateUserBook(userBookRepository, {userId, bookId: book_id, newState: new_state});
-        res.status(200).json({ message: 'Book state updated successfully' });
+        res.status(200).json({ success:true, message: 'Book state updated successfully' });
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      res.status(400).json({ success:false, message: error.message });
     }
 });
 

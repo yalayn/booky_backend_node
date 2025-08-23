@@ -91,8 +91,8 @@ class UserBookRepositoryImpl extends UserBookRepository{
                         book_id     : '$book_id',
                         state       : '$state',
                         year_read   : '$year_read',
-                        rating      : '$reviews.rating',
-                        review      : '$reviews.review',
+                        rating      : '$reviewDetails.rating',
+                        review      : '$reviewDetails.review',
                         registeredAt: '$registeredAt',
                         updatedAt   : '$updatedAt',
                         book_details: {
