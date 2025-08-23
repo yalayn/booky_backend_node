@@ -35,7 +35,7 @@ router.get('/me', authMiddleware, async (req, res) => {
       res.status(404).json({ error: 'User not found' });
     }
   } catch (error) {
-    console.log(`*** Error me:`,error);
+    console.error(`*** Error me:`,error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -71,7 +71,7 @@ router.post('/login', async (req, res) => {
       response["message"] = error.message;
       res.status(200).json(response);
     } else {
-      console.log(`*** Error login:`,error);
+      console.error(`*** Error login:`,error);
       response["message"] = "Internal server error";
       res.status(500).json(response);
     }

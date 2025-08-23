@@ -62,5 +62,5 @@ app.use('/api/review', reviewBookController);
 app.use('/api/usergoal', require('../controllers/UserGoalController'));
 
 app.listen(port, () => {
-  console.log(`Servidor escuchando en http://localhost:${port}`);
+  console.info(`Servidor escuchando en http://localhost:${port}`);
 });

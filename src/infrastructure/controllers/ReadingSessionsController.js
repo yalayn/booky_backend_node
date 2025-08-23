@@ -77,7 +77,6 @@ router.get('/history', authMiddleware, async (req, res) => {
     const baseUrl   = `${req.protocol}://${req.get('host')}`;
     const readingSessionsRepository = new ReadingSessionsRepositoryImpl();
     const userId = req.user._id;
-    console.log(`Fetching reading sessions for user ID: ${userId}`);
     try {
         const listReadingSessions = await readingSessionsRepository.findByUserId(userId);
         if (!listReadingSessions || listReadingSessions.length === 0) {

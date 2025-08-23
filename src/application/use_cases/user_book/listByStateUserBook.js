@@ -40,7 +40,6 @@ async function listByStateUserBook(userBookRepository,{baseUrl,userId}) {
                 author            : book.book_details.author,
                 editorial         : book.book_details.editorial
             });
-            console.log('BookDataMain:', bookDataMain);
             booksByState[book.state].push(bookDataMain);
         }
     });

@@ -2,9 +2,7 @@ const formatTime = require("../../../utils/formatTime");
 
 async function listReadingSessionsByUser(listReadingSessions,baseUrl){
     const data = []
-    console.log(`Listing reading sessions for user with ${listReadingSessions} sessions`,listReadingSessions);
     for (const session of listReadingSessions) {
-        console.log(`Processing session: ${session._id}`);
         const book    = session.book_id;
         let bookTitle = 'Unknown Title';
         let coverUrl  = `${baseUrl}/assets/images/default_cover.jpg`;

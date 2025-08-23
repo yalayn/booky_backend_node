@@ -21,7 +21,6 @@ router.get('/find_by_type/:type', authMiddleware, async (req, res) => {
     const userGoalRepository = new UserGoalRepositoryImpl();
     const { type } = req.params;
     const userId   = req.user._id;
-    console.log(`Finding user goal for user ID: ${userId} and type: ${type}`);
     try {
         const userGoal = await findUserGoalByUserType(userGoalRepository, userId , type);
         res.status(200).json(userGoal);

@@ -73,7 +73,6 @@ class ReadingSessionsRepositoryImpl extends ReadingSessionsRepository{
         if (sessions) {
             for (const session of sessions) {
                 time = time + session.seconds;
-                console.log('Total seconds read:', time);
             }
             return {"hours":formatTime(time), seconds:time};
         }
@@ -81,7 +80,6 @@ class ReadingSessionsRepositoryImpl extends ReadingSessionsRepository{
     }
 
     async findByUserIdAndDateRange(userId, startDate, endDate) {
-        console.log('Finding reading sessions for user:', userId, 'between', startDate, 'and', endDate);
         const sessions = await ReadingSessionModel.find({ userId, startDate: { $gte: startDate }, endDate: { $lte: endDate } });
         return sessions.map(session => new ReadingSession(session._id, session.userId, session.bookId, session.startDate, session.endDate, session.pagesRead));
     }
