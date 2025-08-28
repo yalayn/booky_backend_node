@@ -28,11 +28,17 @@ class UserBookRepositoryImpl extends UserBookRepository{
         return null;
     }
 
-    async findUserBooksWithDetails(userId) {
+    async findUserBooksWithDetails(userId, page = 1, limit = 10, state = null) {
         try {
             userId = new mongoose.Types.ObjectId(userId);
+            const skip = (page - 1) * limit;
+            // Construir el filtro para $match
+            const matchFilter = { user_id: userId };
+            if (state !== null) {
+                matchFilter.state = state;
+            }
             const userBooks = await UserBookModel.aggregate([
-                { $match: { user_id: userId } },
+                { $match: matchFilter },
                 {
                     $lookup: {
                         from        : 'books',
@@ -109,7 +115,9 @@ class UserBookRepositoryImpl extends UserBookRepository{
                             cover_url         : '$bookDetails.cover_url'
                         }
                     }
-                }
+                },
+                {$skip: skip},
+                {$limit: limit}
             ]);
 
             return userBooks;

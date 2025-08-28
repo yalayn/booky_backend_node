@@ -11,6 +11,7 @@ const registerUserBook            = require('../../application/use_cases/user_bo
 const removeUserBook              = require('../../application/use_cases/user_book/removeUserBook');
 const updateStateUserBook         = require('../../application/use_cases/user_book/updateStateUserBook');
 const listByStateUserBook         = require('../../application/use_cases/user_book/listByStateUserBook');
+const listUserBook                = require('../../application/use_cases/user_book/listUserBook');
 
 router.post('/add', authMiddleware, async (req, res) => {
     const userBookRepository  = new UserBookRepositoryImpl();
@@ -76,13 +77,16 @@ router.get('/list', authMiddleware, async (req, res) => {
     const userBookRepository = new UserBookRepositoryImpl();
     try {
         const userId = req.user._id;
-        const userBooks = await userBookRepository.findUserBooksWithDetails(userId);
-        if (!userBooks) {
-            res.status(404).json({ error: 'User books not found' });
+        const page  = parseInt(req.query.page)  || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const state = req.query.state || null;
+        const list   = await listUserBook(userBookRepository, {userId, page, limit, state});
+        if (!list) {
+            res.status(404).json({ success: false, error: 'User books not found' });
         }
-        res.status(200).json(userBooks);
+        res.status(200).json({ success: true, data: list, message: 'User books fetched successfully' });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ success: false, error: error.message });
     }
 });
 
@@ -90,10 +94,9 @@ router.get('/list', authMiddleware, async (req, res) => {
 router.get('/list_by_state', authMiddleware, async (req, res) => {
     const userBookRepository = new UserBookRepositoryImpl();
     try {
-        const baseUrl = `${req.protocol}: //${req.get('host')}`;
         const userId  = req.user._id;
-        const listUserBook = await listByStateUserBook(userBookRepository,{baseUrl,userId});
-        res.status(200).json(listUserBook);
+        const list = await listByStateUserBook(userBookRepository,{userId});
+        res.status(200).json(list);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

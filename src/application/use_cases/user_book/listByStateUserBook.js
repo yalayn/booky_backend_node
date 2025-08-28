@@ -3,13 +3,12 @@ const BookDataMain = require('../../../domain/entities/BookDataMain');
 /** * Lists user books by their state (to_read, reading, read).
  * @param {Object} userBookRepository - The repository to interact with user books.
  * @param {Object} params - The parameters for the function.
- * @param {string} params.baseUrl - The base URL for constructing cover URLs.
  * @param {string} params.userId - The ID of the user   
  * @return {Promise<Object>} A promise that resolves to an object containing arrays of books categorized by their state.
  * @throws {Error} If there is an error fetching user books or if user books are
  * not found.
  */
-async function listByStateUserBook(userBookRepository,{baseUrl,userId}) {
+async function listByStateUserBook(userBookRepository,{userId}) {
     const booksByState = {
         to_read: [],
         reading: [],
