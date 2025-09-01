@@ -28,7 +28,7 @@ class UserBookRepositoryImpl extends UserBookRepository{
         return null;
     }
 
-    async findUserBooksWithDetails(userId, page = 1, limit = 10) {
+    async findUserBooksWithDetails(userId, page = 1, limit = 10, state = null) {
         try {
             userId = new mongoose.Types.ObjectId(userId);
             const skip = (page - 1) * limit;
