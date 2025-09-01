@@ -12,6 +12,7 @@ const removeUserBook              = require('../../application/use_cases/user_bo
 const updateStateUserBook         = require('../../application/use_cases/user_book/updateStateUserBook');
 const listByStateUserBook         = require('../../application/use_cases/user_book/listByStateUserBook');
 const listUserBook                = require('../../application/use_cases/user_book/listUserBook');
+const listUserBookBySearch        = require('../../application/use_cases/user_book/listUserBookBySearch');
 
 router.post('/add', authMiddleware, async (req, res) => {
     const userBookRepository  = new UserBookRepositoryImpl();
@@ -81,6 +82,24 @@ router.get('/list', authMiddleware, async (req, res) => {
         const limit = parseInt(req.query.limit) || 10;
         const state = req.query.state || null;
         const list   = await listUserBook(userBookRepository, {userId, page, limit, state});
+        if (!list) {
+            res.status(404).json({ success: false, error: 'User books not found' });
+        }
+        res.status(200).json({ success: true, data: list, message: 'User books fetched successfully' });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Ruta para listar libros de un usuario
+router.get('/find', authMiddleware, async (req, res) => {
+    const userBookRepository = new UserBookRepositoryImpl();
+    try {
+        const userId = req.user._id;
+        const page   = parseInt(req.query.page)  || 1;
+        const limit  = parseInt(req.query.limit) || 10;
+        const search = req.query.search || null;
+        const list   = await listUserBookBySearch(userBookRepository, {userId, page, limit, search});
         if (!list) {
             res.status(404).json({ success: false, error: 'User books not found' });
         }

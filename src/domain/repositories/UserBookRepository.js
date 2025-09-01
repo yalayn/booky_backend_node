@@ -13,6 +13,9 @@ class UserBookRepository {
     async findUserBooksWithDetails(userId, page, limit, state) {
       throw new Error('Not implemented'); 
     }
+
+    async findUserBooksWithDetailsByQuery(userId, page, limit, state, searchQuery) {
+        throw new Error('Not implemented');
     }
 
     async save(userId, bookId) {
