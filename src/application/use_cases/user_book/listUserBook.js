@@ -1,6 +1,7 @@
 const BookDataMain = require('../../../domain/entities/BookDataMain');
 
 async function listUserBook(userBookRepository, {userId, page, limit, state = null}) {
+    state = (state === 'all') ? null : state;
     const listBook = await userBookRepository.findUserBooksWithDetails(userId, page, limit, state);
     if (!listBook) {
         throw new Error('Error fetching user books: User books not found');

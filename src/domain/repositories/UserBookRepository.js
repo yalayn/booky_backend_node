@@ -10,8 +10,9 @@ class UserBookRepository {
       throw new Error('Not implemented');
     }
 
-    async findUserBooksWithDetails(userId) {
+    async findUserBooksWithDetails(userId, page, limit, state) {
       throw new Error('Not implemented'); 
+    }
     }
 
     async save(userId, bookId) {
